@@ -28,5 +28,18 @@ fun String.splitByWhitespace(): List<String> {
 fun String.removeWhitespace(): String {
     return replace(whitespace, "")
 }
+
 fun String.isNumeric(): Boolean = all { char -> char.isDigit() }
+
+fun <T> String.parseSplit(splitNdx: Int, parser: (String) -> T): T = parser(splitByWhitespace()[splitNdx])
+
+fun String.parseSplit(splitNdx: Int): String = parseSplit(splitNdx) { it }
+fun String.parseIntSplit(splitNdx: Int): Int = parseSplit(splitNdx) { it.toInt() }
+
+fun <T> List<String>.parseSplits(splitNdx: Int, parser: (String) -> T): List<T> {
+    return map { it.parseSplit(splitNdx, parser) }
+}
+
+fun List<String>.parseIntSplits(splitNdx: Int): List<Int> = parseSplits(splitNdx) { it.toInt() }
+fun List<String>.parseSplits(splitNdx: Int): List<String> = parseSplits(splitNdx) { it }
 

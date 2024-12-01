@@ -6,9 +6,9 @@ This repository contains my solutions for the [Advent of Code 2024](https://adve
 
 The project is structured as follows:
 
-* `src/main/kotlin` contains the main code
+* `src/main/kotlin` contains the main code for the solutions
 * `src/test/kotlin` contains the tests used to run the solutions
-* `src/test/resources` contains the input files for each puzzle
+* `src/test/resources` contains the input files for each puzzle (including examples)
 
 ## Solutions
 

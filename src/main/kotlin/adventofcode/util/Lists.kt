@@ -20,6 +20,8 @@ fun <T> List<T>.tail() = drop(1)
 
 fun <T> List<T>.head() = first()
 
+fun <T> List<T>.occurrences() = groupingBy { it }.eachCount().withDefault { 0 }
+
 inline fun <T> List<T>.takeWhileInclusive(predicate: (T) -> Boolean): List<T> {
     var shouldContinue = true
     return takeWhile {

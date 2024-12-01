@@ -1,28 +1,30 @@
-package adventofcode.day01
+package adventofcode
 
-import adventofcode.util.readAsString
+import adventofcode.day01.calculateSimilarityScore
+import adventofcode.day01.calculateTotalDistance
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
 class Day01Test {
+
     @Test
     fun example1() {
-        calculatePart1(readAsString("day01-example1.txt")) shouldBe 11
+        calculatePart1(readExample1()) shouldBe 11
     }
 
     @Test
     fun part1() {
-        calculatePart1(readAsString("day01.txt")) shouldBe 2904518
+        calculatePart1(readInput()) shouldBe 2904518
     }
 
     @Test
     fun example2() {
-        calculatePart2(readAsString("day01-example2.txt")) shouldBe 31
+        calculatePart2(readExample2()) shouldBe 31
     }
 
     @Test
     fun part2() {
-        calculatePart2(readAsString("day01.txt")) shouldBe 18650129
+        calculatePart2(readInput()) shouldBe 18650129
     }
 
     private fun calculatePart1(input: String): Int = input.calculateTotalDistance()

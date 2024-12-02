@@ -1,5 +1,8 @@
 # Advent of Code 2024
 
+![Build Status](https://github.com/jwcarman/adventofcode2024/actions/workflows/maven.yml/badge.svg?branch=main)
+![CodeQL](https://github.com/jwcarman/adventofcode2024/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)
+
 This repository contains my solutions for the [Advent of Code 2024](https://adventofcode.com/2024) 
 
 ## Structure

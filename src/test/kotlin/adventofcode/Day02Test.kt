@@ -1,9 +1,7 @@
 package adventofcode
 
-import adventofcode.day02.isSafe
-import adventofcode.day02.isSafeDampened
-import adventofcode.util.splitByWhitespace
-import adventofcode.util.splitsAsInt
+import adventofcode.day02.countSafeReports
+import adventofcode.day02.countSafeReportsWithDampener
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -29,12 +27,7 @@ class Day02Test {
         calculatePart2(readInput()) shouldBe 717
     }
 
-    private fun calculatePart1(input: String): Int = input.lines()
-        .map { it.splitsAsInt() }
-        .count { it.isSafe() }
+    private fun calculatePart1(input: String): Int = input.countSafeReports()
 
-
-    private fun calculatePart2(input: String): Int = input.lines()
-        .map { it.splitsAsInt() }
-        .count { it.isSafe() || it.isSafeDampened() }
+    private fun calculatePart2(input: String): Int = input.countSafeReportsWithDampener()
 }

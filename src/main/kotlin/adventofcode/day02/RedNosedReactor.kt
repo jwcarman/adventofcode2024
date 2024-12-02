@@ -1,6 +1,15 @@
 package adventofcode.day02
 
+import adventofcode.util.splitsAsInt
 import adventofcode.util.withoutIndex
+
+fun String.countSafeReports() = lines()
+    .map { it.splitsAsInt() }
+    .count { it.isSafe() }
+
+fun String.countSafeReportsWithDampener() = lines()
+    .map { it.splitsAsInt() }
+    .count { it.isSafe() || it.isSafeDampened() }
 
 fun List<Int>.isGraduallyIncreasing() = zipWithNext()
     .map { (a, b) -> b - a }

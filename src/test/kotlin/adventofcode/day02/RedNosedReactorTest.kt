@@ -150,9 +150,9 @@ class RedNosedReactorTest {
     }
 
     @Test
-    fun `1 2 3 4 should dampened should yield correct sublist variants`() {
+    fun `1 2 3 4 should dampened should yield sequence of correct sublist variants`() {
         val input = listOf(1, 2, 3, 4)
-        input.dampened() shouldBe listOf(
+        input.dampened().toList() shouldBe listOf(
             listOf(2, 3, 4),
             listOf(1, 3, 4),
             listOf(1, 2, 4),

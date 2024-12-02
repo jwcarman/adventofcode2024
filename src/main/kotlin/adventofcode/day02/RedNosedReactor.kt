@@ -39,4 +39,4 @@ fun List<Int>.isSafe() = isGraduallyIncreasing() || isGraduallyDecreasing()
 
 fun List<Int>.isSafeDampened() = dampened().any { it.isSafe() }
 
-fun List<Int>.dampened() = indices.map { minusElementAt(it) }
+fun List<Int>.dampened() = indices.asSequence().map { minusElementAt(it) }

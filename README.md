@@ -13,3 +13,4 @@ The project is structured as follows:
 ## Solutions
 
 * [Day 1: Historian Hysteria](src/test/kotlin/adventofcode/day01/Day01Test.kt)
+* [Day 2: Red-Nosed Reports](src/test/kotlin/adventofcode/day02/Day02Test.kt)

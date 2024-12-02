@@ -2,6 +2,7 @@
 
 ![Build Status](https://github.com/jwcarman/adventofcode2024/actions/workflows/maven.yml/badge.svg?branch=main)
 ![CodeQL](https://github.com/jwcarman/adventofcode2024/actions/workflows/github-code-scanning/codeql/badge.svg?branch=main)
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 This repository contains my solutions for the [Advent of Code 2024](https://adventofcode.com/2024) 
 

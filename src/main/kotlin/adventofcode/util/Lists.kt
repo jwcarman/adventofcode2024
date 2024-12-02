@@ -53,3 +53,5 @@ class Repeater<T>(private val values:List<T>) {
         return value
     }
 }
+
+fun <T> List<T>.withoutIndex(index:Int) = filterIndexed{ i, _ -> i != index }

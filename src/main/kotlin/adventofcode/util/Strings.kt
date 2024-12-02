@@ -43,3 +43,9 @@ fun <T> List<String>.parseSplits(splitNdx: Int, parser: (String) -> T): List<T> 
 fun List<String>.parseIntSplits(splitNdx: Int): List<Int> = parseSplits(splitNdx) { it.toInt() }
 fun List<String>.parseSplits(splitNdx: Int): List<String> = parseSplits(splitNdx) { it }
 
+fun <T> String.splitsAs(parser: (String) -> T): List<T> {
+    return splitByWhitespace().map(parser)
+}
+
+fun String.splitsAsInt(): List<Int> = splitsAs { it.toInt() }
+

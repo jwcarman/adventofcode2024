@@ -31,21 +31,21 @@ inline fun <T> List<T>.takeWhileInclusive(predicate: (T) -> Boolean): List<T> {
     }
 }
 
-operator fun <T> List<T>.times(other:List<T>) = sequence {
-    forEach { left->
-        other.forEach { right -> yield(Pair(left,right)) }
+operator fun <T> List<T>.times(other: List<T>) = sequence {
+    forEach { left ->
+        other.forEach { right -> yield(Pair(left, right)) }
     }
 }
 
 fun <T> List<T>.repeat() = sequence {
     var index = 0
-    while(true) {
+    while (true) {
         yield(get(index))
         index = (index + 1) % size
     }
 }
 
-class Repeater<T>(private val values:List<T>) {
+class Repeater<T>(private val values: List<T>) {
     private var ndx = 0
     fun next(): T {
         val value = values[ndx]
@@ -54,4 +54,7 @@ class Repeater<T>(private val values:List<T>) {
     }
 }
 
-fun <T> List<T>.withoutIndex(index:Int) = filterIndexed{ i, _ -> i != index }
+/**
+ * Returns a list containing the elements of the original list without the element at the specified index.
+ */
+fun <T> List<T>.minusElementAt(ndx: Int) = filterIndexed { i, _ -> i != ndx }

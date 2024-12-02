@@ -17,7 +17,7 @@
 package adventofcode.day02
 
 import adventofcode.util.splitsAsInt
-import adventofcode.util.withoutIndex
+import adventofcode.util.minusElementAt
 
 fun String.countSafeReports() = lines()
     .map { it.splitsAsInt() }
@@ -39,5 +39,4 @@ fun List<Int>.isSafe() = isGraduallyIncreasing() || isGraduallyDecreasing()
 
 fun List<Int>.isSafeDampened() = dampened().any { it.isSafe() }
 
-fun List<Int>.dampened() = indices
-    .map { withoutIndex(it) }
+fun List<Int>.dampened() = indices.map { minusElementAt(it) }

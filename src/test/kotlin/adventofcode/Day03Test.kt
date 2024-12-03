@@ -16,6 +16,8 @@
 
 package adventofcode
 
+import adventofcode.day03.evaluateProgram
+import adventofcode.day03.removeDisabledInstructions
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -23,25 +25,26 @@ class Day03Test {
 
     @Test
     fun example1() {
-        calculatePart1(readExample1()) shouldBe 0
+        calculatePart1(readExample1()) shouldBe 161
     }
 
     @Test
     fun part1() {
-        calculatePart1(readInput()) shouldBe 0
+        calculatePart1(readInput()) shouldBe 189527826
     }
 
     @Test
     fun example2() {
-        calculatePart2(readExample2()) shouldBe 0
+        calculatePart2(readExample2()) shouldBe 48
     }
 
     @Test
     fun part2() {
-        calculatePart2(readInput()) shouldBe 0
+        calculatePart2(readInput()) shouldBe 63013756
     }
 
-    private fun calculatePart1(input: String): Int = 0
+    private fun calculatePart1(input: String): Int = input.evaluateProgram()
 
-    private fun calculatePart2(input: String): Int = 0
+    private fun calculatePart2(input: String): Int = input.removeDisabledInstructions()
+        .evaluateProgram()
 }

@@ -14,19 +14,13 @@
  * limitations under the License.
  */
 
-package adventofcode.util.geom.plane
+package adventofcode.day04
 
-import kotlin.math.sign
+import adventofcode.util.wordsearch.WordSearch
 
-data class Line2D(val begin: Point2D, val end: Point2D) {
-    fun points() = sequence {
-        var p = begin
-        val dx = (end.x - begin.x).sign
-        val dy = (end.y - begin.y).sign
-        while (p != end) {
-            yield(p)
-            p = p.translate(dx, dy)
-        }
-        yield(p)
-    }
-}
+fun String.countXmas() = WordSearch(this).searchForWord("XMAS").count()
+
+fun String.countMasX() = WordSearch(this).searchForWord("MAS")
+    .filter { it.direction.isDiagonal() }
+    .groupBy { it.points[1] }
+    .count{it.value.size == 2}

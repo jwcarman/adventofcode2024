@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package adventofcode.util.geom.plane
+package adventofcode.util.grid
 
-import kotlin.math.sign
+import adventofcode.util.geom.plane.Direction
+import adventofcode.util.geom.plane.Point2D
 
-data class Line2D(val begin: Point2D, val end: Point2D) {
-    fun points() = sequence {
-        var p = begin
-        val dx = (end.x - begin.x).sign
-        val dy = (end.y - begin.y).sign
-        while (p != end) {
-            yield(p)
-            p = p.translate(dx, dy)
-        }
-        yield(p)
-    }
+data class Path<T : Any>(val grid: Grid<T>, val direction: Direction, val start: Point2D) {
+    fun asSequence() = generateSequence(start) { it + direction }.takeWhile { it in grid }
+    fun asValueSequence() = asSequence().map { grid[it] }
 }

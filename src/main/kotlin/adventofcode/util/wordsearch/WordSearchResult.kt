@@ -14,19 +14,11 @@
  * limitations under the License.
  */
 
-package adventofcode.util.geom.plane
+package adventofcode.util.wordsearch
 
-import kotlin.math.sign
+import adventofcode.util.grid.Path
 
-data class Line2D(val begin: Point2D, val end: Point2D) {
-    fun points() = sequence {
-        var p = begin
-        val dx = (end.x - begin.x).sign
-        val dy = (end.y - begin.y).sign
-        while (p != end) {
-            yield(p)
-            p = p.translate(dx, dy)
-        }
-        yield(p)
-    }
+class WordSearchResult(path: Path<Char>, val word: String) {
+    val direction = path.direction
+    val points = path.asSequence().toList()
 }

@@ -16,12 +16,13 @@
 
 package adventofcode.util.grid
 
+import adventofcode.util.geom.plane.Direction
 import adventofcode.util.geom.plane.Point2D
 
 interface Grid<T : Any> {
     operator fun get(coordinate: Point2D) = get(coordinate.x, coordinate.y)
 
-    operator fun set(coordinate:Point2D, value:T) = set(coordinate.x, coordinate.y, value)
+    operator fun set(coordinate: Point2D, value: T) = set(coordinate.x, coordinate.y, value)
 
     fun values() = sequence {
         yRange().forEach { y ->
@@ -89,4 +90,5 @@ interface Grid<T : Any> {
 
     fun coordinatesWithValues() = coordinates().map { Pair(it, get(it)) }
 
+    fun pathsFrom(coordinate: Point2D) = Direction.entries.map { Path(this, it, coordinate) }
 }

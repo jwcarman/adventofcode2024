@@ -16,6 +16,8 @@
 
 package adventofcode
 
+import adventofcode.day04.countMasX
+import adventofcode.day04.countXmas
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -23,25 +25,25 @@ class Day04Test {
 
     @Test
     fun example1() {
-        calculatePart1(readExample1()) shouldBe 0
+        calculatePart1(readExample1()) shouldBe 18
     }
 
     @Test
     fun part1() {
-        calculatePart1(readInput()) shouldBe 0
+        calculatePart1(readInput()) shouldBe 2464
     }
 
     @Test
     fun example2() {
-        calculatePart2(readExample2()) shouldBe 0
+        calculatePart2(readExample2()) shouldBe 9
     }
 
     @Test
     fun part2() {
-        calculatePart2(readInput()) shouldBe 0
+        calculatePart2(readInput()) shouldBe 1982
     }
 
-    private fun calculatePart1(input: String): Int = 0
+    private fun calculatePart1(input: String): Int = input.countXmas()
 
-    private fun calculatePart2(input: String): Int = 0
+    private fun calculatePart2(input: String): Int = input.countMasX()
 }

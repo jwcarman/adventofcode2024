@@ -20,3 +20,4 @@ The project is structured as follows:
 * [Day 1: Historian Hysteria](src/test/kotlin/adventofcode/Day01Test.kt)
 * [Day 2: Red-Nosed Reports](src/test/kotlin/adventofcode/Day02Test.kt)
 * [Day 3: Mull It Over](src/test/kotlin/adventofcode/Day03Test.kt)
+* [Day 4: Ceres Search](src/test/kotlin/adventofcode/Day04Test.kt)

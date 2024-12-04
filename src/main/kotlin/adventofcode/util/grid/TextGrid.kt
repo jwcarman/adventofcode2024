@@ -16,7 +16,18 @@
 
 package adventofcode.util.grid
 
+/**
+ * Creates a TextGrid from a string
+ * @param padChar the character to use for padding
+ */
+fun String.toGrid(padChar: Char = ' ') = TextGrid(this.lines(), padChar)
+
+/**
+ * Creates a TextGrid from a list of strings
+ * @param padChar the character to use for padding
+ */
 fun List<String>.toGrid(padChar: Char = ' ') = TextGrid(this, padChar)
+
 class TextGrid(lines: List<String>, padChar: Char = ' ') : AbstractGrid<Char>() {
 
     private var lines: MutableList<String>

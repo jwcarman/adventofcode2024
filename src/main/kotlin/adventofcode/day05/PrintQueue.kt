@@ -37,16 +37,19 @@ fun String.sumUpCorrectedUpdates(): Int {
         .map { it.reorder(orderingRules) }.sumOfMiddlePageNumbers()
 }
 
-fun String.parsePageOrderingRules(): PageOrderingRules = lines().map { it.split('|') }.groupBy { it[0].toInt() }
-    .mapValues { entry -> entry.value.map { it[1].toInt() }.toSet() }.withDefault { emptySet() }
+fun String.parsePageOrderingRules(): PageOrderingRules = lines()
+    .map { it.split('|') }
+    .groupBy { it[0].toInt() }
+    .mapValues { entry -> entry.value.map { it[1].toInt() }.toSet() }
+    .withDefault { emptySet() }
 
-fun String.parseUpdates(): List<SafetyManualUpdate> = lines().map { it.split(',') }.map { it.map { i -> i.toInt() } }
+fun String.parseUpdates(): List<SafetyManualUpdate> = lines()
+    .map { it.split(',') }
+    .map { it.map { i -> i.toInt() } }
 
 fun List<SafetyManualUpdate>.sumOfMiddlePageNumbers() = sumOf { it[it.size / 2] }
 
-fun SafetyManualUpdate.reorder(pageOrderingRules: PageOrderingRules): SafetyManualUpdate {
-    return sortedWith(pageOrderingRules.toComparator())
-}
+fun SafetyManualUpdate.reorder(pageOrderingRules: PageOrderingRules) = sortedWith(pageOrderingRules.toComparator())
 
 fun PageOrderingRules.toComparator() = Comparator<Int> { a, b ->
     when {

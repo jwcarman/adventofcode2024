@@ -34,7 +34,8 @@ fun String.sumUpCorrectedUpdates(): Int {
     val updates = splits[1].parseUpdates()
     return updates
         .filterNot { it.isValid(orderingRules) }
-        .map { it.reorder(orderingRules) }.sumOfMiddlePageNumbers()
+        .map { it.reorder(orderingRules) }
+        .sumOfMiddlePageNumbers()
 }
 
 fun String.parsePageOrderingRules(): PageOrderingRules = lines()

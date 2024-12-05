@@ -16,15 +16,15 @@
 
 package adventofcode.util.wordsearch
 
-import adventofcode.util.geom.plane.Point2D
+import adventofcode.util.grid.Path
 import adventofcode.util.grid.toGrid
 
 class WordSearch(text: String) {
     private val grid = text.toGrid()
 
-    private fun Sequence<Point2D>.matches(word: String): Boolean {
+    private fun Path<Char>.matches(word: String): Boolean {
         val wordIterator = word.iterator()
-        val pointIterator = this.iterator()
+        val pointIterator = this.asSequence().iterator()
         while (wordIterator.hasNext()) {
             if (!pointIterator.hasNext()) {
                 return false
@@ -40,7 +40,7 @@ class WordSearch(text: String) {
         require(word.isNotEmpty()) { "Word must not be empty" }
         grid.coordinates().forEach { coordinate ->
             grid.pathsFrom(coordinate)
-                .filter { it.asSequence().matches(word) }
+                .filter { it.matches(word) }
                 .map { WordSearchResult(it, word) }
                 .forEach { path -> yield(path) }
         }

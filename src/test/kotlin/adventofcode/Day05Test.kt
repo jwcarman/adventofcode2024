@@ -16,6 +16,9 @@
 
 package adventofcode
 
+import adventofcode.day05.sumOfMiddlePageNumbers
+import adventofcode.day05.sumUpCorrectedUpdates
+import adventofcode.day05.sumUpValidUpdates
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -23,25 +26,25 @@ class Day05Test {
 
     @Test
     fun example1() {
-        calculatePart1(readExample1()) shouldBe 0
+        calculatePart1(readExample1()) shouldBe 143
     }
 
     @Test
     fun part1() {
-        calculatePart1(readInput()) shouldBe 0
+        calculatePart1(readInput()) shouldBe 5374
     }
 
     @Test
     fun example2() {
-        calculatePart2(readExample2()) shouldBe 0
+        calculatePart2(readExample2()) shouldBe 123
     }
 
     @Test
     fun part2() {
-        calculatePart2(readInput()) shouldBe 0
+        calculatePart2(readInput()) shouldBe 4260
     }
 
-    private fun calculatePart1(input: String): Int = 0
+    private fun calculatePart1(input: String): Int = input.sumUpValidUpdates()
 
-    private fun calculatePart2(input: String): Int = 0
+    private fun calculatePart2(input: String): Int = input.sumUpCorrectedUpdates()
 }

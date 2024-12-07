@@ -22,3 +22,5 @@ The project is structured as follows:
 * [Day 3: Mull It Over](src/test/kotlin/adventofcode/Day03Test.kt)
 * [Day 4: Ceres Search](src/test/kotlin/adventofcode/Day04Test.kt)
 * [Day 5: Print Queue](src/test/kotlin/adventofcode/Day05Test.kt)
+* [Day 6: Guard Gallivant](src/test/kotlin/adventofcode/Day06Test.kt)
+* [Day 7: Bridge Repair](src/test/kotlin/adventofcode/Day07Test.kt)

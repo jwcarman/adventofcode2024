@@ -16,12 +16,12 @@
 
 package adventofcode.util.geom.plane
 
-data class Ray(val origin: Point2D, val dx: Int, val dy: Int) {
+data class Ray(val origin: Point2D, val slope: Slope) {
 
-    constructor(origin: Point2D, slope: Slope) : this(origin, slope.dx, slope.dy) {}
+    constructor(origin: Point2D, dx: Int, dy: Int) : this(origin, Slope(dx, dy)) {}
     constructor(origin: Point2D, other: Point2D) : this(origin, Slope(origin, other)) {}
     constructor(origin: Point2D, direction: Direction) : this(origin, direction.dx, direction.dy) {}
 
-    fun points() = generateSequence(origin) { it.translate(dx, dy) }
+    fun points() = generateSequence(origin) { it.translate(slope.dx, slope.dy) }
 
 }

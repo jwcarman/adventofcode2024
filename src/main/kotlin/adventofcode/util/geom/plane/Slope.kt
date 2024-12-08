@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-package adventofcode.util
+package adventofcode.util.geom.plane
 
-fun lcm(a: Long, b: Long): Long {
-    val larger = if (a > b) a else b
-    val maxLcm = a * b
-    var lcm = larger
-    while (lcm <= maxLcm) {
-        if (lcm % a == 0L && lcm % b == 0L) {
-            return lcm
-        }
-        lcm += larger
+data class Slope(val dx: Int, val dy: Int) {
+
+    constructor(p1:Point2D, p2: Point2D) : this(p2.x - p1.x, p2.y - p1.y) {
+
     }
-    return maxLcm
-}
 
-fun List<Long>.lcm(): Long {
-    return reduce { acc, l -> lcm(acc, l) }
+    fun reverse(): Slope {
+        return Slope(-dx, -dy)
+    }
 }

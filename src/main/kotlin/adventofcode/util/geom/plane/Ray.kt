@@ -16,21 +16,12 @@
 
 package adventofcode.util.geom.plane
 
-data class Ray(val origin: Point2D, val direction: Direction) {
+data class Ray(val origin: Point2D, val dx: Int, val dy: Int) {
 
-    fun points() = generateSequence(origin) { it + direction }
+    constructor(origin: Point2D, slope: Slope) : this(origin, slope.dx, slope.dy) {}
+    constructor(origin: Point2D, other: Point2D) : this(origin, Slope(origin, other)) {}
+    constructor(origin: Point2D, direction: Direction) : this(origin, direction.dx, direction.dy) {}
 
-    fun intersects(point: Point2D) = when(direction) {
-        Direction.EAST-> point.y == origin.y && point.x >= origin.x
-        Direction.WEST -> point.y == origin.y && point.x <= origin.x
-        Direction.NORTH -> point.x == origin.x && point.y <= origin.y
-        else -> point.x == origin.x && point.y >= origin.y
-    }
+    fun points() = generateSequence(origin) { it.translate(dx, dy) }
 
-    fun intersects(other: Ray): Boolean = when(direction) {
-        Direction.EAST -> other.origin.x >= origin.x && other.origin.y == origin.y
-        Direction.WEST -> other.origin.x <= origin.x && other.origin.y == origin.y
-        Direction.NORTH -> other.origin.y <= origin.y && other.origin.x == origin.x
-        else -> other.origin.y >= origin.y && other.origin.x == origin.x
-    }
 }

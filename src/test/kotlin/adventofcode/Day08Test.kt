@@ -16,8 +16,8 @@
 
 package adventofcode
 
-import adventofcode.day08.countAntinodeLocations
-import adventofcode.day08.countAntinodeLocationsGcd
+import adventofcode.day08.countSingularAntinodes
+import adventofcode.day08.countMultipleAntinodes
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -43,7 +43,7 @@ class Day08Test {
         calculatePart2(readInput()) shouldBe 809
     }
 
-    private fun calculatePart1(input: String): Int = input.countAntinodeLocations()
+    private fun calculatePart1(input: String): Int = input.countSingularAntinodes()
 
-    private fun calculatePart2(input: String): Int = input.countAntinodeLocationsGcd()
+    private fun calculatePart2(input: String): Int = input.countMultipleAntinodes()
 }

@@ -16,58 +16,39 @@
 
 package adventofcode.day08
 
-import adventofcode.util.gcdInt
-import adventofcode.util.geom.plane.Point2D
+import adventofcode.util.geom.plane.Ray
+import adventofcode.util.geom.plane.Slope
 import adventofcode.util.grid.TextGrid
+import adventofcode.util.uniquePairs
 
-fun List<Point2D>.pairCombinations() = sequence {
-    for (p1 in this@pairCombinations) {
-        for (p2 in this@pairCombinations) {
-            if (p1 < p2) {
-                yield(p1 to p2)
-            }
+
+fun TextGrid.antennaPairs() = coordinates()
+    .filter { this[it] != '.' }
+    .groupBy { this[it] }
+    .values
+    .filter { it.size > 1 }
+    .flatMap { it.uniquePairs() }
+
+
+fun String.countMultipleAntinodes(): Int {
+    val map = TextGrid(this.lines())
+    return map.antennaPairs()
+        .flatMap { (p1, p2) ->
+            val slope = Slope(p1, p2)
+            Ray(p1, slope).points().takeWhile { it in map } + Ray(p2, slope.reverse()).points().takeWhile { it in map }
         }
-    }
+        .distinct()
+        .count()
 }
 
-fun Point2D.project(dx: Int, dy: Int) = generateSequence(this) { it.translate(dx, dy) }
-
-
-fun String.countAntinodeLocationsGcd(): Int {
+fun String.countSingularAntinodes(): Int {
     val map = TextGrid(this.lines())
-    val frequencyLocations = map.coordinates()
-        .filter { map[it] != '.' }
-        .groupBy { map[it] }
-        .withDefault { emptyList() }
-
-    return frequencyLocations.values
-        .asSequence()
-        .filter { it.size > 1 }
-        .flatMap { it.pairCombinations() }
+    return map.antennaPairs()
         .flatMap { (p1, p2) ->
-            val dx = p2.x - p1.x
-            val dy = p2.y - p1.y
-            val gcd = gcdInt(dy, dx)
-            val dxReduced = dx / gcd
-            val dyReduced = dy / gcd
-            p1.project(dxReduced, dyReduced).takeWhile {it in map}.toList() + p2.project(-dxReduced, -dyReduced).takeWhile { it in map }.toList()
-        }.distinct().count { it in map }
-}
+            val slope = Slope(p1, p2)
+            Ray(p2, slope).points().drop(1).take(1) + Ray(p1, slope.reverse()).points().drop(1).take(1) }
+        .filter { it in map }
+        .distinct()
+        .count()
 
-fun String.countAntinodeLocations(): Int {
-    val map = TextGrid(this.lines())
-    val frequencyLocations = map.coordinates()
-        .filter { map[it] != '.' }
-        .groupBy { map[it] }
-        .withDefault { emptyList() }
-
-    return frequencyLocations.values
-        .asSequence()
-        .filter { it.size > 1 }
-        .flatMap { it.pairCombinations() }
-        .flatMap { (p1, p2) ->
-            val dx = p2.x - p1.x
-            val dy = p2.y - p1.y
-            listOf(p2.translate(dx, dy), p1.translate(-dx, -dy))
-        }.distinct().count { it in map }
 }

@@ -37,6 +37,14 @@ operator fun <T> List<T>.times(other: List<T>) = sequence {
     }
 }
 
+fun <T> List<T>.uniquePairs() = sequence {
+    for (i in indices) {
+        for (j in i + 1 until size) {
+            yield(Pair(get(i), get(j)))
+        }
+    }
+}
+
 fun <T> List<T>.repeat() = sequence {
     var index = 0
     while (true) {

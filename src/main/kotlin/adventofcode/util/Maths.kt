@@ -16,6 +16,17 @@
 
 package adventofcode.util
 
+fun gcdInt(a: Int, b: Int): Int {
+    var num1 = a
+    var num2 = b
+    while (num2 != 0) {
+        val temp = num2
+        num2 = num1 % num2
+        num1 = temp
+    }
+    return num1
+}
+
 fun lcm(a: Long, b: Long): Long {
     val larger = if (a > b) a else b
     val maxLcm = a * b

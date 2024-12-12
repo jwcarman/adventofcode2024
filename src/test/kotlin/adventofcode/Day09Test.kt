@@ -16,6 +16,10 @@
 
 package adventofcode
 
+import adventofcode.day09.calculateFilesystemChecksum
+import adventofcode.day09.blockDefragment
+import adventofcode.day09.fileDefragment
+import adventofcode.day09.toBlocks
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -23,17 +27,17 @@ class Day09Test {
 
     @Test
     fun example1() {
-        calculatePart1(readExample1()) shouldBe 0
+        calculatePart1(readExample1()) shouldBe 1928L
     }
 
     @Test
     fun part1() {
-        calculatePart1(readInput()) shouldBe 0
+        calculatePart1(readInput()) shouldBe 6370402949053L
     }
 
     @Test
     fun example2() {
-        calculatePart2(readExample2()) shouldBe 0
+        calculatePart2(readExample2()) shouldBe 2858L
     }
 
     @Test
@@ -41,7 +45,7 @@ class Day09Test {
         calculatePart2(readInput()) shouldBe 0
     }
 
-    private fun calculatePart1(input: String): Int = 0
+    private fun calculatePart1(input: String): Long = input.toBlocks().blockDefragment().calculateFilesystemChecksum()
 
-    private fun calculatePart2(input: String): Int = 0
+    private fun calculatePart2(input: String): Long = input.toBlocks().toMutableList().fileDefragment().asSequence().calculateFilesystemChecksum()
 }

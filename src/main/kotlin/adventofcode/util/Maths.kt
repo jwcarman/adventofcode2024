@@ -16,6 +16,8 @@
 
 package adventofcode.util
 
+fun Int.isEven() = this % 2 == 0
+
 fun lcm(a: Long, b: Long): Long {
     val larger = if (a > b) a else b
     val maxLcm = a * b

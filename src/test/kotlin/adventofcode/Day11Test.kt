@@ -16,6 +16,7 @@
 
 package adventofcode
 
+import adventofcode.day11.countStonesAfterBlinks
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -23,25 +24,25 @@ class Day11Test {
 
     @Test
     fun example1() {
-        calculatePart1(readExample1()) shouldBe 0
+        calculatePart1(readExample1()) shouldBe 55312L
     }
 
     @Test
     fun part1() {
-        calculatePart1(readInput()) shouldBe 0
+        calculatePart1(readInput()) shouldBe 199946L
     }
 
     @Test
     fun example2() {
-        calculatePart2(readExample2()) shouldBe 0
+        calculatePart2(readExample2()) shouldBe 65601038650482L
     }
 
     @Test
     fun part2() {
-        calculatePart2(readInput()) shouldBe 0
+        calculatePart2(readInput()) shouldBe 237994815702032L
     }
 
-    private fun calculatePart1(input: String): Int = 0
+    private fun calculatePart1(input: String): Long = input.countStonesAfterBlinks(25)
 
-    private fun calculatePart2(input: String): Int = 0
+    private fun calculatePart2(input: String): Long = input.countStonesAfterBlinks(75)
 }

@@ -41,7 +41,7 @@ class Day10Test {
 
     @Test
     fun part2() {
-        calculatePart2(readInput()) shouldBe 0
+        calculatePart2(readInput()) shouldBe 1686
     }
 
     private fun calculatePart1(input: String): Int = input.sumOfAllTrailHeadScores()

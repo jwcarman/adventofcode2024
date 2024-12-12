@@ -84,6 +84,23 @@ object Graphs {
         return search(start, end, neighbors) { list, element -> list.add(element) }
     }
 
+    fun <V> allPaths(start: V, end: V, neighbors: (V) -> List<V>): List<List<V>> {
+
+        val searchPaths = mutableListOf(listOf(start))
+        val paths = mutableListOf<List<V>>()
+        while (searchPaths.isNotEmpty()) {
+            val searchPath = searchPaths.removeFirst()
+            val terminus = searchPath.last()
+            if (terminus == end) {
+                paths.add(searchPath)
+            }
+            neighbors(terminus).filter { it !in searchPath }.forEach { neighbor ->
+                searchPaths.add(searchPath + neighbor)
+            }
+        }
+        return paths
+    }
+
     private fun <V> search(
         start: V,
         end: V,

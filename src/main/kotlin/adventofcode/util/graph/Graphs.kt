@@ -101,6 +101,19 @@ object Graphs {
         return paths
     }
 
+    fun <V> connectedComponents(vertices:Set<V>, neighbors: (V) -> List<V>): List<Set<V>> {
+        val components = mutableListOf<Set<V>>()
+        val visited = mutableSetOf<V>()
+        vertices.forEach { vertex ->
+            if (vertex !in visited) {
+                val component = reachable(vertex, neighbors = neighbors)
+                visited += component
+                components.add(component)
+            }
+        }
+        return components
+    }
+
     private fun <V> search(
         start: V,
         end: V,

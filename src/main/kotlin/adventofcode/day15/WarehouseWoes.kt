@@ -18,14 +18,12 @@ package adventofcode.day15
 
 import adventofcode.util.geom.plane.Direction
 import adventofcode.util.geom.plane.Point2D
-import adventofcode.util.geom.plane.Ray
 import adventofcode.util.grid.TextGrid
 import adventofcode.util.removeWhitespace
 import adventofcode.util.splitByEmptyLines
 
-fun String.parseInput(): Pair<TextGrid, Sequence<Direction>> {
+fun String.parseInput(): Pair<Warehouse, Sequence<Direction>> {
     val parts = splitByEmptyLines()
-    val map = TextGrid(parts[0].lines())
     val moves = parts[1].removeWhitespace().asSequence()
         .map {
             when (it) {
@@ -36,7 +34,7 @@ fun String.parseInput(): Pair<TextGrid, Sequence<Direction>> {
 
             }
         }
-    return Pair(map, moves)
+    return Pair(Warehouse(parts[0]), moves)
 }
 
 private const val BOX = 'O'
@@ -46,30 +44,67 @@ private const val WALL = '#'
 private const val LEFT_BOX = '['
 private const val RIGHT_BOX = ']'
 
-fun TextGrid.boxLocations() = coordinates().filter { this[it] == BOX || this[it] == LEFT_BOX }
+class Warehouse(input: String) {
+    val map = TextGrid(input.lines())
+    var robotLocation = map.coordinates().first { map[it] == ROBOT }
 
-fun Point2D.gpsCoordinate() = y * 100 + x
-
-fun TextGrid.pushOnce(robotLocation: Point2D, direction: Direction): Point2D {
-    require(this[robotLocation] == ROBOT)
-    val path = Ray(robotLocation, direction).points().takeWhile { this[it] != WALL }.toList()
-    if (path.none { this[it] == OPEN }) {
-        return robotLocation
+    fun push(direction: Direction) {
+        val reachable = reachableFrom(robotLocation, direction)
+        if (reachable.any { map[it] == WALL }) {
+            return
+        }
+        reachable.filter { map[it] != OPEN }.forEach {
+            map[it + direction] = map[it]
+            map[it] = OPEN
+        }
+        robotLocation += direction
     }
-    path.takeWhile { this[it] != OPEN }.reversed().forEach { this[it + direction] = this[it] }
-    this[robotLocation] = OPEN
-    return robotLocation + direction
+
+    fun boxLocations() = map.coordinates().filter { map[it] == BOX || map[it] == LEFT_BOX }
+
+    private fun reachableFrom(location: Point2D, direction: Direction): List<Point2D> {
+        val queue = mutableListOf(location)
+        val reachable = mutableListOf<Point2D>()
+        while (queue.isNotEmpty()) {
+            val current = queue.removeFirst()
+            reachable.addFirst(current)
+            val neighbor = current + direction
+
+            when (direction) {
+                Direction.NORTH, Direction.SOUTH -> when (map[current]) {
+                    BOX, ROBOT, LEFT_BOX, RIGHT_BOX -> when (map[neighbor]) {
+                        LEFT_BOX -> {
+                            queue.add(neighbor)
+                            queue.add(neighbor.east())
+                        }
+
+                        RIGHT_BOX -> {
+                            queue.add(neighbor)
+                            queue.add(neighbor.west())
+                        }
+
+                        else -> queue.add(neighbor)
+                    }
+
+                    else -> continue
+                }
+
+                else -> when (map[current]) {
+                    BOX, LEFT_BOX, RIGHT_BOX, ROBOT -> queue.add(neighbor)
+                    else -> continue
+                }
+            }
+        }
+        return reachable.distinct()
+    }
 }
 
-fun String.calculateSumOfGpsCoordinates(): Int {
-    val (map, moves) = parseInput()
-    moves.fold(map.coordinates().first { map[it] == ROBOT }) { location, direction ->
-        map.pushOnce(
-            location,
-            direction
-        )
-    }
-    return map.boxLocations().sumOf { it.gpsCoordinate() }
+fun Point2D.gpsCoordinate(): Long = 100L * y + x
+
+fun String.calculateSumOfGpsCoordinates(): Long {
+    val (warehouse, moves) = parseInput()
+    moves.forEach { warehouse.push(it) }
+    return warehouse.boxLocations().sumOf { it.gpsCoordinate() }
 }
 
 fun String.widened() = this

@@ -40,7 +40,7 @@ class Day12Test {
 
     @Test
     fun part2() {
-        calculatePart2(readInput()) shouldBe 0
+        calculatePart2(readInput()) shouldBe 784982L
     }
 
     private fun calculatePart1(input: String): Long = input.calculateTotalFencePrice()

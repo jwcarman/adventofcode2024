@@ -42,7 +42,7 @@ class Day09Test {
 
     @Test
     fun part2() {
-        calculatePart2(readInput()) shouldBe 0
+        calculatePart2(readInput()) shouldBe 6398096697992L
     }
 
     private fun calculatePart1(input: String): Long = input.toBlocks().blockDefragment().calculateFilesystemChecksum()

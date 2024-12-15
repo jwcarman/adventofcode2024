@@ -18,7 +18,20 @@ package adventofcode.util
 
 fun Int.isEven() = this % 2 == 0
 
-fun lcm(a: Long, b: Long): Long {
+fun lcmInt(a:Int, b:Int):Int {
+    val larger = if (a > b) a else b
+    val maxLcm = a * b
+    var lcm = larger
+    while (lcm <= maxLcm) {
+        if (lcm % a == 0 && lcm % b == 0) {
+            return lcm
+        }
+        lcm += larger
+    }
+    return maxLcm
+}
+
+fun lcmLong(a: Long, b: Long): Long {
     val larger = if (a > b) a else b
     val maxLcm = a * b
     var lcm = larger
@@ -32,5 +45,5 @@ fun lcm(a: Long, b: Long): Long {
 }
 
 fun List<Long>.lcm(): Long {
-    return reduce { acc, l -> lcm(acc, l) }
+    return reduce { acc, l -> lcmLong(acc, l) }
 }

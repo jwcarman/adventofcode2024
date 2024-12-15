@@ -25,12 +25,14 @@ class SparseGraph<V : Any, E : Any> : Graph<V, E> {
     }
 
     override fun addEdge(from: V, to: V, value: E, weight: Double) {
-        adjacency[vertex(from)]!![vertex(to)] = Edge(value, weight)
+        fromMap(from)[vertex(to)] = Edge(value, weight)
     }
 
     override fun neighbors(from: V): List<V> {
-        return adjacency[vertex(from)]!!.keys.toList()
+        return fromMap(from).keys.toList()
     }
+
+    private fun fromMap(from: V) = adjacency.getOrPut(vertex(from)) { mutableMapOf() }
 
     private val shortestPathsCache = mutableMapOf<V, ShortestPaths<V>>()
 
@@ -45,9 +47,9 @@ class SparseGraph<V : Any, E : Any> : Graph<V, E> {
         throw IllegalArgumentException("Vertex $value does not exist.")
     }
 
-    override fun edge(from: V, to: V): Edge<E>? = adjacency[vertex(from)]!![vertex(to)]
+    override fun edge(from: V, to: V): Edge<E>? = fromMap(from)[vertex(to)]
 
-    override fun edges(from: V): List<Edge<E>> = adjacency[vertex(from)]!!.values.toList()
+    override fun edges(from: V): List<Edge<E>> = fromMap(from).values.toList()
 
 
     override fun vertices(): Set<V> = adjacency.keys

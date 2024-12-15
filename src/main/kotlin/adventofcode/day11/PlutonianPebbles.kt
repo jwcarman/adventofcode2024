@@ -30,7 +30,7 @@ data class Stone(val number: Long) {
     fun countDescendents(generations: Int, memory: MutableMap<Pair<Long, Int>, Long>): Long {
         val key = Pair(number, generations)
         if (memory.containsKey(key)) {
-            return memory[key]!!
+            return memory.getValue(key)
         }
         if (generations == 0) {
             memory[Pair(number, generations)] = 1

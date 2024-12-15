@@ -40,12 +40,12 @@ object Graphs {
         val visited = mutableSetOf<V>()
         vertices.forEach { vertex -> dist[vertex] = Double.POSITIVE_INFINITY }
         dist[start] = 0.0
-        val queue = PriorityQueue { l: V, r: V -> compareDoubles(dist[l]!!, dist[r]!!) }
+        val queue = PriorityQueue { l: V, r: V -> compareDoubles(dist.getOrDefault(l, Double.MAX_VALUE), dist.getOrDefault(r, Double.MAX_VALUE)) }
         queue.add(start)
         while (queue.isNotEmpty()) {
             val vertex = queue.poll()
             visited.add(vertex)
-            val distanceToVertex = dist[vertex]!!
+            val distanceToVertex = dist.getOrDefault(vertex, Double.MAX_VALUE)
             neighbors(vertex).filter { it !in visited }.forEach { neighbor ->
                 val distanceThroughVertex = distanceToVertex + weight(vertex, neighbor)
                 if (distanceThroughVertex < dist[neighbor]!!) {

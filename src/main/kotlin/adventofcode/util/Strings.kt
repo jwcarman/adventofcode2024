@@ -21,6 +21,7 @@ fun String.removeAll(vararg strings: String): String {
 }
 
 private val whitespace = Regex("\\s+")
+
 fun String.splitByWhitespace(): List<String> {
     return split(whitespace)
 }
@@ -46,6 +47,8 @@ fun List<String>.parseSplits(splitNdx: Int): List<String> = parseSplits(splitNdx
 fun <T> String.splitsAs(parser: (String) -> T): List<T> {
     return splitByWhitespace().map(parser)
 }
+
+fun String.splitByEmptyLines() = split("\n\n")
 
 fun String.splitsAsInt(): List<Int> = splitsAs { it.toInt() }
 

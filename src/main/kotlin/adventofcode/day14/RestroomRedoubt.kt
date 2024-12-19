@@ -88,6 +88,7 @@ fun List<Point2D>.calculateShannonEntropy(maxX: Int, maxY: Int, gridWidth: Int, 
 
     val totalPoints = size.toDouble()
     return histogram.values
+        .asSequence()
         .map { it / totalPoints }
         .sumOf { -it * ln(it) }
 }

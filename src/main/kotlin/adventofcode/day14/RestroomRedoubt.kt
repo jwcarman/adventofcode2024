@@ -91,6 +91,8 @@ fun List<Point2D>.calculateShannonEntropy(maxX: Int, maxY: Int, gridWidth: Int, 
         .sumOf { -it * ln(it) }
 }
 
+private const val GRID_WIDTH = 10
+private const val GRID_HEIGHT = 10
 
 fun String.findTree(): Int {
     val robots = parseRobots()
@@ -99,7 +101,7 @@ fun String.findTree(): Int {
     val sequences = robots.map { it.points(maxX, maxY) }
 
     val minEntropyT = (1..lcmInt(maxX, maxY)).minBy { t ->
-        sequences.map { it.next() }.calculateShannonEntropy(maxX, maxY, 10, 10)
+        sequences.map { it.next() }.calculateShannonEntropy(maxX, maxY, GRID_WIDTH, GRID_HEIGHT)
     }
     robots.map { it.move(minEntropyT, maxX, maxY) }.toSet().printGrid(maxX, maxY)
     return minEntropyT

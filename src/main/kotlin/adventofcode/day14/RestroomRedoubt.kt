@@ -24,7 +24,6 @@ import adventofcode.util.occurrences
 import adventofcode.util.removeAll
 import adventofcode.util.splitsAsInt
 import kotlin.math.ln
-import kotlin.math.roundToInt
 
 
 data class Robot(val ray: Ray) {
@@ -79,11 +78,16 @@ fun Set<Point2D>.printGrid(maxX: Int, maxY: Int) {
 }
 
 fun List<Point2D>.calculateShannonEntropy(maxX: Int, maxY: Int, gridWidth: Int, gridHeight: Int): Double {
-    val cellWidth = maxX * 1.0 / gridWidth
-    val cellHeight = maxY * 1.0 / gridHeight
-    return groupBy { (x, y) -> Point2D((x / cellWidth).roundToInt(), (y / cellHeight).roundToInt()) }
-        .values
-        .map { it.size.toDouble() / size }
+    val cellWidth = maxX.toDouble() / gridWidth
+    val cellHeight = maxY.toDouble() / gridHeight
+    val histogram = mutableMapOf<Point2D, Int>()
+    forEach { (x, y) ->
+        val cell = Point2D((x / cellWidth).toInt(), (y / cellHeight).toInt())
+        histogram[cell] = histogram.getOrDefault(cell, 0) + 1
+    }
+    val totalPoints = size.toDouble()
+    return histogram.values
+        .map { it / totalPoints }
         .sumOf { -it * ln(it) }
 }
 

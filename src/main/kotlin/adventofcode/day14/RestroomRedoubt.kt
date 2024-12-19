@@ -80,11 +80,12 @@ fun Set<Point2D>.printGrid(maxX: Int, maxY: Int) {
 fun List<Point2D>.calculateShannonEntropy(maxX: Int, maxY: Int, gridWidth: Int, gridHeight: Int): Double {
     val cellWidth = maxX.toDouble() / gridWidth
     val cellHeight = maxY.toDouble() / gridHeight
-    val histogram = mutableMapOf<Point2D, Int>()
-    forEach { (x, y) ->
-        val cell = Point2D((x / cellWidth).toInt(), (y / cellHeight).toInt())
-        histogram[cell] = histogram.getOrDefault(cell, 0) + 1
-    }
+    val histogram = this.groupingBy { point ->
+        val cellX = (point.x / cellWidth).toInt()
+        val cellY = (point.y / cellHeight).toInt()
+        cellX to cellY
+    }.eachCount()
+
     val totalPoints = size.toDouble()
     return histogram.values
         .map { it / totalPoints }

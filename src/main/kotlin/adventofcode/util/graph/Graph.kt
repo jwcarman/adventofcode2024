@@ -34,6 +34,9 @@ interface Graph<V : Any, E : Any> {
     fun dfs(start: V, end: V): List<V> = Graphs.dfs(start, end, ::neighbors)
     fun bfs(start: V, end: V): List<V> = Graphs.bfs(start, end, ::neighbors)
 
+    fun dfsTraversal(start: V): List<V> = Graphs.dfsTraversal(start, ::neighbors)
+    fun bfsTraversal(start: V): List<V> = Graphs.bfsTraversal(start, ::neighbors)
+
     fun reachable(start: V, maxSteps: Int) = Graphs.reachable(start, maxSteps, ::neighbors)
 
 }

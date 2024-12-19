@@ -40,7 +40,12 @@ object Graphs {
         val visited = mutableSetOf<V>()
         vertices.forEach { vertex -> dist[vertex] = Double.POSITIVE_INFINITY }
         dist[start] = 0.0
-        val queue = PriorityQueue { l: V, r: V -> compareDoubles(dist.getOrDefault(l, Double.MAX_VALUE), dist.getOrDefault(r, Double.MAX_VALUE)) }
+        val queue = PriorityQueue { l: V, r: V ->
+            compareDoubles(
+                dist.getOrDefault(l, Double.MAX_VALUE),
+                dist.getOrDefault(r, Double.MAX_VALUE)
+            )
+        }
         queue.add(start)
         while (queue.isNotEmpty()) {
             val vertex = queue.poll()
@@ -77,11 +82,19 @@ object Graphs {
     }
 
     fun <V> dfs(start: V, end: V, neighbors: (V) -> List<V>): List<V> {
-        return search(start, end, neighbors) { list, element -> list.add(0, element) }
+        return search(start, end, neighbors) { addFirst(it) }
     }
 
     fun <V> bfs(start: V, end: V, neighbors: (V) -> List<V>): List<V> {
-        return search(start, end, neighbors) { list, element -> list.add(element) }
+        return search(start, end, neighbors) { addLast(it) }
+    }
+
+    fun <V> dfsTraversal(start: V, neighbors: (V) -> List<V>): List<V> {
+        return traverse(start, neighbors) { addFirst(it) }
+    }
+
+    fun <V> bfsTraversal(start: V, neighbors: (V) -> List<V>): List<V> {
+        return traverse(start, neighbors) { addLast(it) }
     }
 
     fun <V> allPaths(start: V, end: V, neighbors: (V) -> List<V>): List<List<V>> {
@@ -101,7 +114,7 @@ object Graphs {
         return paths
     }
 
-    fun <V> connectedComponents(vertices:Set<V>, neighbors: (V) -> List<V>): List<Set<V>> {
+    fun <V> connectedComponents(vertices: Set<V>, neighbors: (V) -> List<V>): List<Set<V>> {
         val components = mutableListOf<Set<V>>()
         val visited = mutableSetOf<V>()
         vertices.forEach { vertex ->
@@ -114,17 +127,34 @@ object Graphs {
         return components
     }
 
+    private fun <V> traverse(
+        start: V,
+        neighbors: (V) -> List<V>,
+        append: MutableList<V>.(V) -> Unit
+    ): List<V> {
+        val visited = mutableSetOf(start)
+        val vertices = mutableListOf(start)
+        val traversal = mutableListOf<V>()
+        while (vertices.isNotEmpty()) {
+            val vertex = vertices.removeFirst()
+            traversal.add(vertex)
+            neighbors(vertex).filter { it !in visited }.forEach { neighbor ->
+                visited += neighbor
+                vertices.append(neighbor)
+            }
+        }
+        return traversal
+    }
+
     private fun <V> search(
         start: V,
         end: V,
         neighbors: (V) -> List<V>,
-        add: (MutableList<List<V>>, List<V>) -> Unit
+        append: MutableList<List<V>>.(List<V>) -> Unit
     ): List<V> {
         val visited = mutableSetOf<V>()
         visited += start
-        val paths = mutableListOf<List<V>>()
-        add(paths, listOf(start))
-
+        val paths = mutableListOf(listOf(start))
         while (paths.isNotEmpty()) {
             val path = paths.removeFirst()
             val terminus = path.last()
@@ -133,7 +163,7 @@ object Graphs {
             }
             neighbors(terminus).filter { it !in visited }.forEach { neighbor ->
                 visited += neighbor
-                add(paths, path + neighbor)
+                paths.append(path + neighbor)
             }
         }
         return listOf()

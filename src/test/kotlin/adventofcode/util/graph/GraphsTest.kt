@@ -17,6 +17,7 @@
 package adventofcode.util.graph
 
 import adventofcode.util.geom.plane.Point2D
+import io.kotest.matchers.shouldBe
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -40,7 +41,7 @@ class GraphsTest {
             Point2D(-1, 0),
             Point2D(0, -1)
         )
-
-        assertThat(Graphs.reachable(Point2D.origin()) {it.neighbors().filter { it in searchSpace }}).hasSize(5)
+        assertThat(Graphs.reachable(Point2D.origin()) { it.neighbors().filter { n -> n in searchSpace } }).hasSize(5)
     }
+
 }

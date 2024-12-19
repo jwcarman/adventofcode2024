@@ -23,6 +23,8 @@ import adventofcode.util.lcmInt
 import adventofcode.util.occurrences
 import adventofcode.util.removeAll
 import adventofcode.util.splitsAsInt
+import kotlin.math.ln
+import kotlin.math.roundToInt
 
 
 data class Robot(val ray: Ray) {
@@ -50,13 +52,13 @@ fun List<Point2D>.safetyFactor(maxX: Int, maxY: Int): Int {
     val midY = maxY / 2
     return filter { it.x != midX && it.y != midY }
         .map { (x, y) ->
-        when {
-            x < midX && y < midY -> "1"
-            x > midX && y < midY -> "2"
-            x < midX && y > midY -> "3"
-            else -> "4"
+            when {
+                x < midX && y < midY -> "1"
+                x > midX && y < midY -> "2"
+                x < midX && y > midY -> "3"
+                else -> "4"
+            }
         }
-    }
         .occurrences()
         .values.reduce(Int::times)
 }
@@ -76,36 +78,25 @@ fun Set<Point2D>.printGrid(maxX: Int, maxY: Int) {
     println(grid)
 }
 
-fun String.findTree(): Long {
+fun List<Point2D>.calculateShannonEntropy(maxX: Int, maxY: Int, gridWidth: Int, gridHeight: Int): Double {
+    val cellWidth = maxX * 1.0 / gridWidth
+    val cellHeight = maxY * 1.0 / gridHeight
+    return groupBy { (x, y) -> Point2D((x / cellWidth).roundToInt(), (y / cellHeight).roundToInt()) }
+        .values
+        .map { it.size.toDouble() / size }
+        .sumOf { -it * ln(it) }
+}
+
+
+fun String.findTree(): Int {
     val robots = parseRobots()
     val maxX = robots.maxOf { it.ray.origin.x } + 1
     val maxY = robots.maxOf { it.ray.origin.y } + 1
+    val sequences = robots.map { it.points(maxX, maxY) }
 
-    val sequences = robots.map { it.points(maxX, maxY) }.toList()
-
-    var t = 1
-    val maxT = lcmInt(maxX, maxY)
-    var maxCount = 0
-    while (t <= maxT) {
-        val points = sequences.map { it.next() }.toSet()
-
-        val count = points.count { p -> setOf(p.northEast(), p.northWest(), p.southEast(), p.southWest()).any { it in points } }
-        if(count > maxCount) {
-            println("t = ${t}")
-            points.printGrid(maxX, maxY)
-            println()
-            maxCount = count
-        }
-        //if(points.groupBy { it.y }.values.any{it.size > 3}) {
-
-        //}
-//        while (points.size >= tree.size) {
-//            if (points.containsAll(tree)) {
-//                return t
-//            }
-//            points = points.filter { it.y > 0 }.map { it.north() }.toSet()
-//        }
-        t++
+    val minEntropyT = (1..lcmInt(maxX, maxY)).minBy { t ->
+        sequences.map { it.next() }.calculateShannonEntropy(maxX, maxY, 10, 10)
     }
-    return -1L
+    robots.map { it.move(minEntropyT, maxX, maxY) }.toSet().printGrid(maxX, maxY)
+    return minEntropyT
 }

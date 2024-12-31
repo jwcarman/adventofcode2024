@@ -16,21 +16,13 @@
 
 package adventofcode.util.graph
 
-class ShortestPaths<V>(
-    val origin: V,
-    private val distances: Map<V, Double>,
-    private val predecessors: Map<V, V>
-) {
+class Path<V>(val vertices: List<V>, val length: Double) {
 
-    fun pathExists(end: V): Boolean = end in predecessors
+    fun append(vertex: V, distance: Double): Path<V> = Path(vertices + vertex, length + distance)
 
-    fun pathTo(end: V): List<V> {
-        val path = mutableListOf(end)
-        while(path.first() in predecessors) {
-            path.addFirst(predecessors.getValue(path.first()))
-        }
-        return path
-    }
+    val origin: V
+        get() = vertices.first()
 
-    fun distanceTo(end: V) = distances.getOrDefault(end, Double.POSITIVE_INFINITY)
+    val destination: V
+        get() = vertices.last()
 }

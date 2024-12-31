@@ -17,6 +17,8 @@
 package adventofcode.util.graph
 
 import java.util.PriorityQueue
+import kotlin.time.measureTime
+import kotlin.time.measureTimedValue
 
 private fun compareDoubles(left: Double, right: Double): Int {
     if (left < right) {
@@ -29,6 +31,60 @@ private fun compareDoubles(left: Double, right: Double): Int {
 }
 
 object Graphs {
+
+    /**
+     * Implementation of Yen's K-Shortest Paths Algorithm as a sequence
+     * @param start the starting vertex
+     * @param end the ending vertex
+     * @param vertices the set of all vertices
+     * @param neighbors a function that returns the neighbors of a vertex
+     * @param weight a function that returns the weight of an edge
+     * @return a sequence of increasingly longer paths from the start vertex to the end vertex
+     */
+    fun <V> shortestPaths(start: V, end: V, vertices: Set<V>, neighbors: (V) -> List<V>, weight: (V, V) -> Double) =
+        sequence {
+            val previousPaths = mutableListOf<List<V>>()
+            val absoluteShortest = shortestPaths(start, vertices, neighbors, weight)
+            if (absoluteShortest.pathExists(end)) {
+                val shortest = absoluteShortest.pathTo(end)
+                yield(shortest)
+                previousPaths.addLast(shortest)
+                var k = 2
+                while (true) {
+                    val previousPath = previousPaths.last()
+                    val candidates = previousPath.asSequence().zipWithNext().map { (from, to) ->
+                        val head = previousPath.takeWhile { it != to }
+                        val visited = head.toSet()
+                        val limitedNeighbors: (V) -> List<V> =
+                            { n -> if (n == from) neighbors(n) - visited - to else neighbors(n) - visited }
+                        val (tails, _) = measureTimedValue { shortestPaths(from, vertices, limitedNeighbors, weight) }
+                        head to tails
+                    }
+                        .filter { (_, tails) -> tails.pathExists(end) }
+                        .map { (head, tails) -> head + tails.pathTo(end).drop(1) }
+                        .filter { it !in previousPaths }
+                        .toList()
+
+                    if (candidates.isEmpty()) {
+                        return@sequence
+                    }
+                    val nextShortest =
+                        candidates.minBy { it.asSequence().zipWithNext().sumOf { (from, to) -> weight(from, to) } }
+                    yield(nextShortest)
+                    previousPaths.addLast(nextShortest)
+                    k++
+                }
+            }
+        }
+
+    /**
+     * Implementation of Dijkstra's Algorithm
+     * @param start the starting vertex
+     * @param vertices the set of all vertices
+     * @param neighbors a function that returns the neighbors of a vertex
+     * @param weight a function that returns the weight of an edge
+     * @return the shortest paths from the start vertex to all other vertices
+     */
     fun <V> shortestPaths(
         start: V,
         vertices: Set<V>,
@@ -49,9 +105,11 @@ object Graphs {
         queue.add(start)
         while (queue.isNotEmpty()) {
             val vertex = queue.poll()
+            require(vertex in vertices)
             visited.add(vertex)
             val distanceToVertex = dist.getOrDefault(vertex, Double.MAX_VALUE)
             neighbors(vertex).filter { it !in visited }.forEach { neighbor ->
+                require(neighbor in vertices)
                 val distanceThroughVertex = distanceToVertex + weight(vertex, neighbor)
                 if (distanceThroughVertex < dist[neighbor]!!) {
                     pred[neighbor] = vertex
@@ -167,5 +225,18 @@ object Graphs {
             }
         }
         return listOf()
+    }
+
+    fun String.parseGraph(): Graph<String, String> {
+        val regex = Regex("""\s*(\S+)\s*--\s*(\S+)\[(\d+\.\d+|\d+)]\s*-->\s*(\S+)\s*""")
+        val graph = SparseGraph<String, String>()
+        lines().forEach { line ->
+            regex.matchEntire(line)?.destructured?.let { (from, edge, weight, to) ->
+                graph.addVertex(from)
+                graph.addVertex(to)
+                graph.addEdge(from, to, edge, weight.toDouble())
+            }
+        }
+        return graph
     }
 }

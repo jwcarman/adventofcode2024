@@ -16,6 +16,9 @@
 
 package adventofcode
 
+import adventofcode.day18.findFirstByteThatBlocksExit
+import adventofcode.day18.findShortestPathToExitAfter
+import adventofcode.util.geom.plane.Point2D
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -23,25 +26,25 @@ class Day18Test {
 
     @Test
     fun example1() {
-        calculatePart1(readExample1()) shouldBe 0
+        calculatePart1(readExample1(), 12) shouldBe 22
     }
 
     @Test
     fun part1() {
-        calculatePart1(readInput()) shouldBe 0
+        calculatePart1(readInput(), 1024) shouldBe 326
     }
 
     @Test
     fun example2() {
-        calculatePart2(readExample2()) shouldBe 0
+        calculatePart2(readExample2()) shouldBe Point2D(6,1)
     }
 
     @Test
     fun part2() {
-        calculatePart2(readInput()) shouldBe 0
+        calculatePart2(readInput()) shouldBe Point2D(18,62)
     }
 
-    private fun calculatePart1(input: String): Int = 0
+    private fun calculatePart1(input: String, bytes:Int): Int = input.findShortestPathToExitAfter(bytes)
 
-    private fun calculatePart2(input: String): Int = 0
+    private fun calculatePart2(input: String): Point2D = input.findFirstByteThatBlocksExit()
 }

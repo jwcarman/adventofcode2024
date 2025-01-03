@@ -89,7 +89,7 @@ object Graphs {
         start: V,
         vertices: Set<V>,
         neighbors: (V) -> List<V>,
-        weight: (V, V) -> Double
+        weight: (V, V) -> Double = { _, _ -> 1.0 }
     ): ShortestPaths<V> {
         val pred = mutableMapOf<V, V>()
         val dist = mutableMapOf<V, Double>()

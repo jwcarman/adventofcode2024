@@ -37,6 +37,6 @@ Here are the solutions I have implemented along with the time it took to run eac
 | [Day 15: Warehouse Woes](src/test/kotlin/adventofcode/Day15Test.kt) | 129 |
 | [Day 16: Reindeer Maze](src/test/kotlin/adventofcode/Day16Test.kt) | 261 |
 | [Day 17: Chronospatial Computer](src/test/kotlin/adventofcode/Day17Test.kt) | 93 |
-| [Day 18: RAM Run](src/test/kotlin/adventofcode/Day18Test.kt) | 5,520 |
+| [Day 18: RAM Run](src/test/kotlin/adventofcode/Day18Test.kt) | 3,328 |
 | [Day 19: Linen Layout](src/test/kotlin/adventofcode/Day19Test.kt) | 60 |
 | [Day 20: Race Condition](src/test/kotlin/adventofcode/Day20Test.kt) | 0 |

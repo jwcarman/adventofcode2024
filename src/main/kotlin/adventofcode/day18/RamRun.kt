@@ -28,15 +28,18 @@ fun List<Point2D>.generateMap() = TextGrid(List(maxOf { it.y } + 1) { ".".repeat
 
 fun String.findFirstByteThatBlocksExit(): Point2D {
     val points = parsePoints()
-    val map = points.generateMap()
-    val start = map.coordinates().first()
-    val end = map.coordinates().last()
-    val vertices = map.coordinates().filter { map[it] != '#' }.toSet()
-    val neighbors = { p: Point2D -> p.neighbors().filter { it in map }.filter { map[it] != '#' } }
-    return points.find { p ->
-        map[p] = '#'
-        !Graphs.shortestPaths(start, vertices, neighbors).pathExists(end)
-    } ?: throw IllegalStateException("No byte blocks exit")
+
+    val start = Point2D.origin()
+    val xRange = 0..points.maxOf { it.x }
+    val yRange = 0..points.maxOf { it.y }
+    val end = Point2D(xRange.last, yRange.last)
+    val fallen = mutableSetOf<Point2D>()
+    val neighbors =
+        { p: Point2D -> p.neighbors().filter { it.x in xRange && it.y in yRange }.filter { it !in fallen} }
+    return points.first { p ->
+        fallen.add(p)
+        Graphs.dfs(start, end, neighbors).isEmpty()
+    }
 }
 
 fun String.findShortestPathToExitAfter(nBytes: Int): Int {

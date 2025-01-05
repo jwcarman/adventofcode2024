@@ -91,4 +91,6 @@ interface Grid<T : Any> {
     fun coordinatesWithValues() = coordinates().map { Pair(it, get(it)) }
 
     fun pathsFrom(coordinate: Point2D) = Direction.entries.map { Path(this, it, coordinate) }
+
+    fun isEdge(coordinate: Point2D) = coordinate.x == 0 || coordinate.y == 0 || coordinate.x == width() - 1 || coordinate.y == height() - 1
 }

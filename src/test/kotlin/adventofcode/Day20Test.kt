@@ -16,6 +16,7 @@
 
 package adventofcode
 
+import adventofcode.day20.countBestCheats
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -23,12 +24,12 @@ class Day20Test {
 
     @Test
     fun example1() {
-        calculatePart1(readExample1()) shouldBe 0
+        calculatePart1(readExample1(), 20) shouldBe 5
     }
 
     @Test
     fun part1() {
-        calculatePart1(readInput()) shouldBe 0
+        calculatePart1(readInput(), 100) shouldBe 0
     }
 
     @Test
@@ -41,7 +42,7 @@ class Day20Test {
         calculatePart2(readInput()) shouldBe 0
     }
 
-    private fun calculatePart1(input: String): Int = 0
+    private fun calculatePart1(input: String, savingsThreshold:Int): Int = input.countBestCheats(savingsThreshold)
 
     private fun calculatePart2(input: String): Int = 0
 }

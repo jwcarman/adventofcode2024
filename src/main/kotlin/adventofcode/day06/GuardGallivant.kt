@@ -18,76 +18,66 @@ package adventofcode.day06
 
 import adventofcode.util.geom.plane.Direction
 import adventofcode.util.geom.plane.Point2D
+import adventofcode.util.geom.plane.Pose
 import adventofcode.util.grid.TextGrid
-
-private fun Direction.turnRight() = when (this) {
-    Direction.NORTH -> Direction.EAST
-    Direction.EAST -> Direction.SOUTH
-    Direction.SOUTH -> Direction.WEST
-    Direction.WEST -> Direction.NORTH
-    Direction.NORTHEAST -> Direction.SOUTHEAST
-    Direction.SOUTHEAST -> Direction.SOUTHWEST
-    Direction.SOUTHWEST -> Direction.NORTHWEST
-    Direction.NORTHWEST -> Direction.NORTHEAST
-}
 
 private const val OBSTACLE = '#'
 private const val OPEN = '.'
 
-private fun TextGrid.isObstacle(position: Point2D) = position in this && this[position] == OBSTACLE
+private class Guard(input: String) {
 
-private class Guard {
-    fun patrol(map: TextGrid) = sequence {
-        var step = Step(map.coordinates().first { map[it] == '^' }, Direction.NORTH)
-        while (step.position in map) {
-            yield(step)
-            val nextStep = step.nextStep()
-            step = if (map.isObstacle(nextStep.position)) {
-                step.turnRight()
-            } else {
-                nextStep
-            }
+    private val lab = TextGrid(input.lines())
+    private val start = Pose(lab.coordinates().first { lab[it] == '^' }, Direction.NORTH)
+
+    private fun Pose.patrolProtocol(): Pose {
+        val fwd = forward()
+        if(fwd.position !in lab) {
+            return fwd
+        }
+        return if (lab[fwd.position] == OBSTACLE) {
+            turnRight()
+        } else {
+            fwd
         }
     }
-}
 
-private data class Step(val position: Point2D, val direction: Direction) {
-    fun nextStep() = copy(position = position + direction)
-    fun turnRight() = copy(direction = direction.turnRight())
-}
-
-private fun Sequence<Step>.isLoop(): Boolean {
-    val visited = mutableSetOf<Step>()
-    for (step in this) {
-        if (step in visited) {
-            return true
+    fun patrol(): List<Point2D> {
+        var current = start
+        val visited = mutableSetOf<Pose>()
+        val path = mutableListOf<Point2D>()
+        while (current.position in lab && current !in visited) {
+            visited.add(current)
+            path.add(current.position)
+            current = current.patrolProtocol()
         }
-        visited.add(step)
+        path.add(current.position)
+        return path
     }
-    return false
-}
 
-private fun <T> TextGrid.withObstacleAt(position: Point2D, function: (TextGrid) -> T): T {
-    try {
-        this[position] = OBSTACLE
-        return function(this)
-    } finally {
-        this[position] = OPEN
+    fun patrolWithObstacleAt(position: Point2D): List<Point2D> {
+        val original = lab[position]
+        try {
+            lab[position] = OBSTACLE
+            return patrol()
+        } finally {
+            lab[position] = original
+        }
     }
+
+    fun isOpen(position:Point2D): Boolean = lab[position] == OPEN
+    fun isInLab(position:Point2D): Boolean = position in lab
 }
 
 fun String.countObstacleLocationsThatCauseLoops(): Int {
-    val map = TextGrid(this.lines())
-    val guard = Guard()
-    val candidates = guard.patrol(map)
-        .map { it.position }
-        .filter { map[it] == OPEN }
+    val guard = Guard(this)
+    return guard.patrol()
+        .dropLast(1)
+        .filter { guard.isOpen(it) }
         .toSet()
-    return candidates
-        .count { location -> map.withObstacleAt(location) { guard.patrol(it).isLoop() } }
+        .count { guard.isInLab(guard.patrolWithObstacleAt(it).last()) }
 }
 
-fun String.calculatePatrolPathLength() = Guard().patrol(TextGrid(this.lines()))
-    .map { it.position }
+fun String.calculatePatrolPathLength() = Guard(this)
+    .patrol()
     .toSet()
-    .size
+    .size - 1

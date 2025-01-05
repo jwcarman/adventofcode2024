@@ -27,4 +27,37 @@ enum class Direction(val dx: Int, val dy: Int) {
     NORTHWEST(-1, -1);
 
     fun isDiagonal() = dx != 0 && dy != 0
+
+    fun turnRight() = when(this) {
+        NORTH -> EAST
+        EAST -> SOUTH
+        SOUTH -> WEST
+        WEST -> NORTH
+        NORTHEAST -> SOUTHEAST
+        SOUTHEAST -> SOUTHWEST
+        SOUTHWEST -> NORTHWEST
+        NORTHWEST -> NORTHEAST
+    }
+
+    fun turnLeft() = when(this) {
+        NORTH -> WEST
+        WEST -> SOUTH
+        SOUTH -> EAST
+        EAST -> NORTH
+        NORTHEAST -> NORTHWEST
+        NORTHWEST -> SOUTHWEST
+        SOUTHWEST -> SOUTHEAST
+        SOUTHEAST -> NORTHEAST
+    }
+
+    fun turnAround() = when(this) {
+        NORTH -> SOUTH
+        SOUTH -> NORTH
+        EAST -> WEST
+        WEST -> EAST
+        NORTHEAST -> SOUTHWEST
+        SOUTHWEST -> NORTHEAST
+        SOUTHEAST -> NORTHWEST
+        NORTHWEST -> SOUTHEAST
+    }
 }

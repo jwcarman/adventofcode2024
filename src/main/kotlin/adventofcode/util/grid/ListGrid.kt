@@ -23,9 +23,7 @@ class ListGrid<T : Any>(private val width: Int, values: List<T>) : AbstractGrid<
     private val height: Int
 
     init {
-        if (values.size % width != 0) {
-            throw IllegalArgumentException("Values length is not a multiple of provided width $width.")
-        }
+        require(values.size % width == 0) { "Values length is not a multiple of provided width $width." }
         this.values = values.toMutableList()
         this.height = values.size / width
     }

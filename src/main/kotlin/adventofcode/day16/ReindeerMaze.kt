@@ -17,7 +17,7 @@
 package adventofcode.day16
 
 import adventofcode.util.geom.plane.Direction
-import adventofcode.util.geom.plane.Point2D
+import adventofcode.util.geom.plane.Pose
 import adventofcode.util.graph.Graphs
 import adventofcode.util.graph.ShortestPaths
 import adventofcode.util.grid.TextGrid
@@ -26,29 +26,8 @@ fun String.countBestTiles(): Int = ReindeerMaze(this).countBestTiles()
 
 fun String.findLowestScore() = ReindeerMaze(this).findLowestScore()
 
-data class Pose(val position: Point2D, val orientation: Direction) {
-    fun goForward() = Pose(position + orientation, orientation)
-    fun goBack() = Pose(position - orientation, orientation)
-    fun turnLeft() = Pose(
-        position, when (orientation) {
-            Direction.NORTH -> Direction.WEST
-            Direction.WEST -> Direction.SOUTH
-            Direction.SOUTH -> Direction.EAST
-            else -> Direction.NORTH
-        }
-    )
+fun Pose.distanceTo(other: Pose) = if(orientation == other.orientation) 1.0 else 1000.0
 
-    fun turnRight() = Pose(
-        position, when (orientation) {
-            Direction.NORTH -> Direction.EAST
-            Direction.EAST -> Direction.SOUTH
-            Direction.SOUTH -> Direction.WEST
-            else -> Direction.NORTH
-        }
-    )
-
-    fun distanceTo(other: Pose) = if (orientation == other.orientation) 1.0 else 1000.0
-}
 
 class Traversal(val path: List<Pose>, val distance: Double) {
     val visited = path.toSet()
@@ -64,8 +43,8 @@ class ReindeerMaze(input: String) {
 
     private fun Pose.isWall() = maze[position] == WALL
 
-    fun successorsOf(pose: Pose) = neighborsFn(END) { it.goForward() }(pose)
-    fun predecessorsOf(pose: Pose) = neighborsFn(START) { it.goBack() }(pose)
+    fun successorsOf(pose: Pose) = neighborsFn(END) { it.forward() }(pose)
+    fun predecessorsOf(pose: Pose) = neighborsFn(START) { it.backward() }(pose)
 
     private fun neighborsFn(goal: Char, advance: (Pose) -> Pose): (Pose) -> List<Pose> = { state ->
         val neighbors = mutableListOf<Pose>()

@@ -25,7 +25,7 @@ Here are the solutions I have implemented along with the time it took to run eac
 | [Day 3: Mull It Over](src/test/kotlin/adventofcode/Day03Test.kt) | 39 |
 | [Day 4: Ceres Search](src/test/kotlin/adventofcode/Day04Test.kt) | 120 |
 | [Day 5: Print Queue](src/test/kotlin/adventofcode/Day05Test.kt) | 50 |
-| [Day 6: Guard Gallivant](src/test/kotlin/adventofcode/Day06Test.kt) | 6,359 |
+| [Day 6: Guard Gallivant](src/test/kotlin/adventofcode/Day06Test.kt) | 778 |
 | [Day 7: Bridge Repair](src/test/kotlin/adventofcode/Day07Test.kt) | 69 |
 | [Day 8: Resonant Collinearity](src/test/kotlin/adventofcode/Day08Test.kt) | 77 |
 | [Day 9: Disk Fragmenter](src/test/kotlin/adventofcode/Day09Test.kt) | 1,012 |

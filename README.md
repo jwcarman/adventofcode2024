@@ -32,3 +32,8 @@ The project is structured as follows:
 * [Day 13: Claw Contraption](src/test/kotlin/adventofcode/Day13Test.kt)
 * [Day 14: Restroom Redoubt](src/test/kotlin/adventofcode/Day14Test.kt)
 * [Day 15: Warehouse Woes](src/test/kotlin/adventofcode/Day15Test.kt)
+* [Day 16: Reindeer Maze](src/test/kotlin/adventofcode/Day16Test.kt)
+* [Day 17: Chronospatial Computer](src/test/kotlin/adventofcode/Day17Test.kt)
+* [Day 18: RAM Run](src/test/kotlin/adventofcode/Day18Test.kt)
+* [Day 19: Linen Layout](src/test/kotlin/adventofcode/Day19Test.kt)
+* [Day 20: Race Condition](src/test/kotlin/adventofcode/Day20Test.kt)

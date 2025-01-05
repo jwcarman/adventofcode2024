@@ -16,6 +16,8 @@
 
 package adventofcode
 
+import adventofcode.day19.countPossibleDesigns
+import adventofcode.day19.countDesignCombos
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 
@@ -23,25 +25,25 @@ class Day19Test {
 
     @Test
     fun example1() {
-        calculatePart1(readExample1()) shouldBe 0
+        calculatePart1(readExample1()) shouldBe 6
     }
 
     @Test
     fun part1() {
-        calculatePart1(readInput()) shouldBe 0
+        calculatePart1(readInput()) shouldBe 206
     }
 
     @Test
     fun example2() {
-        calculatePart2(readExample2()) shouldBe 0
+        calculatePart2(readExample2()) shouldBe 16L
     }
 
     @Test
     fun part2() {
-        calculatePart2(readInput()) shouldBe 0
+        calculatePart2(readInput()) shouldBe 622121814629343L
     }
 
-    private fun calculatePart1(input: String): Int = 0
+    private fun calculatePart1(input: String): Int = input.countPossibleDesigns()
 
-    private fun calculatePart2(input: String): Int = 0
+    private fun calculatePart2(input: String): Long = input.countDesignCombos()
 }

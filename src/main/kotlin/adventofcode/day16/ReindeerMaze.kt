@@ -19,81 +19,106 @@ package adventofcode.day16
 import adventofcode.util.geom.plane.Direction
 import adventofcode.util.geom.plane.Point2D
 import adventofcode.util.graph.Graphs
+import adventofcode.util.graph.ShortestPaths
 import adventofcode.util.grid.TextGrid
 
-data class State(val position: Point2D, val orientation: Direction) {
-    fun moveForward() = State(position + orientation, orientation)
-    fun turnLeft() = State(position, orientation.turnLeft())
-    fun turnRight() = State(position, orientation.turnRight())
-}
+fun String.countBestTiles(): Int = ReindeerMaze(this).countBestTiles()
 
-private fun Direction.turnRight() = when (this) {
-    Direction.NORTH -> Direction.EAST
-    Direction.EAST -> Direction.SOUTH
-    Direction.SOUTH -> Direction.WEST
-    else -> Direction.NORTH
-}
+fun String.findLowestScore() = ReindeerMaze(this).findLowestScore()
 
-private fun Direction.turnLeft() = when (this) {
-    Direction.NORTH -> Direction.WEST
-    Direction.WEST -> Direction.SOUTH
-    Direction.SOUTH -> Direction.EAST
-    else -> Direction.NORTH
-}
-
-fun String.findBestTiles(): Int {
-    val maze = TextGrid(lines())
-    val start = State(maze.coordinates().find { maze[it] == 'S' }!!, Direction.EAST)
-
-    val neighborsFn: (State) -> List<State> = { state ->
-        listOf(state.moveForward(), state.turnRight(), state.turnLeft())
-            .filter { maze[it.position] != '#' }
-    }
-    val reachable = Graphs.reachable(start, neighbors = neighborsFn)
-    val ends = reachable.filter { maze[it.position] == 'E' }
-    val memory = mutableMapOf<Pair<State, State>, Double>()
-    val weight: (State, State) -> Double =
-        { s1, s2 -> memory.computeIfAbsent(Pair(s1, s2)) { (s1, s2) -> score(s1, s2) } }
-    val lowestScore =
-        ends.minOf { end -> Graphs.shortestPaths(start, reachable, neighborsFn, weight).distanceTo(end).toInt() }
-
-    val shortestPaths = ends
-        .asSequence()
-        .flatMap { end ->
-            val shortestPathsForEnd =
-                Graphs.shortestPaths(start, end, reachable, neighborsFn, weight)
-                    .takeWhile { path -> path.score().toInt() == lowestScore }
-
-            shortestPathsForEnd
-        }.toList()
-
-    val bestTiles = shortestPaths
-        .flatten()
-        .map { it.position }
-        .toSet()
-    return bestTiles.size
-
-}
-
-fun List<State>.score() = zipWithNext().sumOf { (s1, s2) -> score(s1, s2) }
-
-private fun score(s1: State, s2: State) = if (s1.orientation == s2.orientation) 1.0 else 1000.0
-
-fun String.findLowestScore(): Int {
-    val maze = TextGrid(lines())
-    val start = State(maze.coordinates().find { maze[it] == 'S' }!!, Direction.EAST)
-    val neighborsFn: (State) -> List<State> = { state ->
-        listOf(state.moveForward(), state.turnRight(), state.turnLeft())
-            .filter { maze[it.position] != '#' }
-    }
-    val reachable = Graphs.reachable(start, neighbors = neighborsFn)
-    return reachable.filter { maze[it.position] == 'E' }
-        .minOf { end ->
-            Graphs.shortestPaths(
-                start,
-                reachable,
-                neighborsFn
-            ) { s1, s2 -> score(s1, s2) }.distanceTo(end)
+data class Pose(val position: Point2D, val orientation: Direction) {
+    fun goForward() = Pose(position + orientation, orientation)
+    fun goBack() = Pose(position - orientation, orientation)
+    fun turnLeft() = Pose(
+        position, when (orientation) {
+            Direction.NORTH -> Direction.WEST
+            Direction.WEST -> Direction.SOUTH
+            Direction.SOUTH -> Direction.EAST
+            else -> Direction.NORTH
         }
-        .toInt()
+    )
+
+    fun turnRight() = Pose(
+        position, when (orientation) {
+            Direction.NORTH -> Direction.EAST
+            Direction.EAST -> Direction.SOUTH
+            Direction.SOUTH -> Direction.WEST
+            else -> Direction.NORTH
+        }
+    )
+
+    fun distanceTo(other: Pose) = if (orientation == other.orientation) 1.0 else 1000.0
 }
+
+class Traversal(val path: List<Pose>, val distance: Double) {
+    val visited = path.toSet()
+}
+
+private const val WALL = '#'
+private const val END = 'E'
+private const val START = 'S'
+
+class ReindeerMaze(input: String) {
+
+    private val maze = TextGrid(input.lines())
+
+    private fun Pose.isWall() = maze[position] == WALL
+
+    fun successorsOf(pose: Pose) = neighborsFn(END) { it.goForward() }(pose)
+    fun predecessorsOf(pose: Pose) = neighborsFn(START) { it.goBack() }(pose)
+
+    private fun neighborsFn(goal: Char, advance: (Pose) -> Pose): (Pose) -> List<Pose> = { state ->
+        val neighbors = mutableListOf<Pose>()
+        if (maze[state.position] != goal) {
+            if (!advance(state).isWall()) {
+                neighbors.add(advance(state))
+            }
+            if (!advance(state.turnLeft()).isWall()) {
+                neighbors.add(state.turnLeft())
+            }
+            if (!advance(state.turnRight()).isWall()) {
+                neighbors.add(state.turnRight())
+            }
+        }
+        neighbors
+    }
+
+    private fun shortestPaths(): ShortestPaths<Pose> {
+        val start = Pose(maze.coordinates().find { maze[it] == START }!!, Direction.EAST)
+        val vertices = Graphs.reachable(start, neighbors = ::successorsOf)
+        return Graphs.shortestPaths(start, vertices, ::successorsOf) { p1, p2 -> p1.distanceTo(p2) }
+    }
+
+    fun findLowestScore(): Int {
+        val shortestPaths = shortestPaths()
+        val ends = shortestPaths.reachable().filter { maze[it.position] == END }
+        return ends.minOf { end -> shortestPaths.distanceTo(end) }.toInt()
+    }
+
+    fun countBestTiles(): Int {
+        val shortestPaths = shortestPaths()
+        val ends = shortestPaths.reachable().filter { maze[it.position] == END }
+        val shortestDistance = ends.minOf { end -> shortestPaths.distanceTo(end) }
+        val stack = mutableListOf<Traversal>()
+        ends.forEach { stack.addFirst(Traversal(listOf(it), 0.0)) }
+        val allShortestPaths = mutableListOf<List<Pose>>()
+        while (stack.isNotEmpty()) {
+            val traversal = stack.removeFirst()
+            val currentState = traversal.path.last()
+            if (maze[currentState.position] == START) {
+                allShortestPaths.add(traversal.path)
+            } else {
+                predecessorsOf(currentState)
+                    .filter { it !in traversal.visited }
+                    .filter { shortestPaths.distanceTo(it) + traversal.distance <= shortestDistance }
+                    .forEach { pred ->
+                        val newPath = traversal.path + pred
+                        val newDistance = traversal.distance + pred.distanceTo(currentState)
+                        stack.addFirst(Traversal(newPath, newDistance))
+                    }
+            }
+        }
+        return allShortestPaths.flatten().map { it.position }.distinct().size
+    }
+}
+

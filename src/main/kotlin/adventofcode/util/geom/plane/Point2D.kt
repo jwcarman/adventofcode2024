@@ -44,7 +44,8 @@ data class Point2D(val x: Int, val y: Int) : Comparable<Point2D> {
 
     fun manhattanDistance(other: Point2D) = abs(x - other.x) + abs(y - other.y)
 
-    operator fun plus(direction: Direction) = translate(direction)
+    operator fun plus(direction: Direction) = translate(direction.dx, direction.dy)
+    operator fun minus(direction: Direction) = translate(-direction.dx, -direction.dy)
 
     fun isAdjacent(other: Point2D) = manhattanDistance(other) == 1
 
@@ -53,8 +54,6 @@ data class Point2D(val x: Int, val y: Int) : Comparable<Point2D> {
     }
 
     fun translate(dx: Int, dy: Int) = Point2D(x + dx, y + dy)
-
-    fun translate(direction: Direction) = translate(direction.dx, direction.dy)
 
     companion object {
         fun origin() = Point2D(0, 0)

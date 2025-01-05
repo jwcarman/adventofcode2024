@@ -16,7 +16,7 @@
 
 package adventofcode
 
-import adventofcode.day16.findBestTiles
+import adventofcode.day16.countBestTiles
 import adventofcode.day16.findLowestScore
 import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
@@ -45,5 +45,5 @@ class Day16Test {
 
     private fun calculatePart1(input: String): Int = input.findLowestScore()
 
-    private fun calculatePart2(input: String): Int = input.findBestTiles()
+    private fun calculatePart2(input: String): Int = input.countBestTiles()
 }

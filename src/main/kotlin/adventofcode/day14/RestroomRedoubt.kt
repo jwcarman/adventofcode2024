@@ -18,7 +18,6 @@ package adventofcode.day14
 
 import adventofcode.util.geom.plane.Point2D
 import adventofcode.util.geom.plane.Ray
-import adventofcode.util.grid.TextGrid
 import adventofcode.util.lcmInt
 import adventofcode.util.occurrences
 import adventofcode.util.removeAll
@@ -69,14 +68,6 @@ fun String.calculateSafetyFactorAt(t: Int): Int {
     return robots.map { it.move(t, maxX, maxY) }.safetyFactor(maxX, maxY)
 }
 
-fun Set<Point2D>.printGrid(maxX: Int, maxY: Int) {
-    val grid = TextGrid(".".repeat(maxX * maxY).chunked(maxX))
-    forEach { (x, y) ->
-        grid[x, y] = '#'
-    }
-    println(grid)
-}
-
 fun List<Point2D>.calculateShannonEntropy(maxX: Int, maxY: Int, gridWidth: Int, gridHeight: Int): Double {
     val cellWidth = maxX.toDouble() / gridWidth
     val cellHeight = maxY.toDouble() / gridHeight
@@ -101,7 +92,7 @@ fun String.findTree(): Int {
     val maxX = robots.maxOf { it.ray.origin.x } + 1
     val maxY = robots.maxOf { it.ray.origin.y } + 1
     val sequences = robots.map { it.points(maxX, maxY) }
-    val minEntropyT = (1..lcmInt(maxX, maxY)).minBy { t ->
+    val minEntropyT = (1..lcmInt(maxX, maxY)).minBy { _ ->
         sequences.map { it.next() }.calculateShannonEntropy(maxX, maxY, GRID_WIDTH, GRID_HEIGHT)
     }
     return minEntropyT

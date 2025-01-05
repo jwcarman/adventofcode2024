@@ -29,7 +29,7 @@ class Day20Test {
 
     @Test
     fun part1() {
-        calculatePart1(readInput(), 100) shouldBe 0
+        calculatePart1(readInput(), 100) shouldBe 1311
     }
 
     @Test

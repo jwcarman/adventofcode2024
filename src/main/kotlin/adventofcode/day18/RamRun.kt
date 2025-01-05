@@ -35,10 +35,10 @@ fun String.findFirstByteThatBlocksExit(): Point2D {
     val end = Point2D(xRange.last, yRange.last)
     val fallen = mutableSetOf<Point2D>()
     val neighbors =
-        { p: Point2D -> p.neighbors().filter { it.x in xRange && it.y in yRange }.filter { it !in fallen} }
+        { p: Point2D -> p.neighbors().filter { it.x in xRange && it.y in yRange }.filter { it !in fallen } }
     return points.first { p ->
         fallen.add(p)
-        Graphs.dfs(start, end, neighbors).isEmpty()
+        Graphs.bfs(start, end, neighbors).isEmpty()
     }
 }
 

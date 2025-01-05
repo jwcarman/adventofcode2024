@@ -46,8 +46,6 @@ data class PerimeterPoint(val point: Point2D, val side: Direction) {
 
 data class GardenGroup(private val points: Set<Point2D>) {
 
-    private fun Point2D.isHorizontalSidePoint() = this.north() in points || this.south() in points
-
     private fun sides(): List<Set<PerimeterPoint>> {
         val perimeter = perimeter()
         return Graphs.connectedComponents(perimeter) { p -> p.neighbors().filter { it in perimeter } }

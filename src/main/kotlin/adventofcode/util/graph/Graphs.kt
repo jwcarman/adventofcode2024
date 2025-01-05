@@ -87,6 +87,46 @@ object Graphs {
      */
     fun <V> shortestPaths(
         start: V,
+        neighbors: (V) -> List<V>,
+        weight: (V, V) -> Double = { _, _ -> 1.0 }
+    ): ShortestPaths<V> {
+        val pred = mutableMapOf<V, V>()
+        val dist = mutableMapOf<V, Double>()
+        val visited = mutableSetOf<V>()
+        dist[start] = 0.0
+        val queue = PriorityQueue { l: V, r: V ->
+            compareDoubles(
+                dist.getOrDefault(l, Double.MAX_VALUE),
+                dist.getOrDefault(r, Double.MAX_VALUE)
+            )
+        }
+        queue.add(start)
+        while (queue.isNotEmpty()) {
+            val vertex = queue.poll()
+            visited.add(vertex)
+            val distanceToVertex = dist.getOrDefault(vertex, Double.MAX_VALUE)
+            neighbors(vertex).filter { it !in visited }.forEach { neighbor ->
+                val distanceThroughVertex = distanceToVertex + weight(vertex, neighbor)
+                if (distanceThroughVertex < dist.getOrDefault(neighbor, Double.MAX_VALUE)) {
+                    pred[neighbor] = vertex
+                    dist[neighbor] = distanceThroughVertex
+                    queue.add(neighbor)
+                }
+            }
+        }
+        return ShortestPaths(start, dist, pred)
+    }
+
+    /**
+     * Implementation of Dijkstra's Algorithm
+     * @param start the starting vertex
+     * @param vertices the set of all vertices
+     * @param neighbors a function that returns the neighbors of a vertex
+     * @param weight a function that returns the weight of an edge
+     * @return the shortest paths from the start vertex to all other vertices
+     */
+    fun <V> shortestPaths(
+        start: V,
         vertices: Set<V>,
         neighbors: (V) -> List<V>,
         weight: (V, V) -> Double = { _, _ -> 1.0 }

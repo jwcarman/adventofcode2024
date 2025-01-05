@@ -101,10 +101,8 @@ fun String.findTree(): Int {
     val maxX = robots.maxOf { it.ray.origin.x } + 1
     val maxY = robots.maxOf { it.ray.origin.y } + 1
     val sequences = robots.map { it.points(maxX, maxY) }
-
     val minEntropyT = (1..lcmInt(maxX, maxY)).minBy { t ->
         sequences.map { it.next() }.calculateShannonEntropy(maxX, maxY, GRID_WIDTH, GRID_HEIGHT)
     }
-    robots.map { it.move(minEntropyT, maxX, maxY) }.toSet().printGrid(maxX, maxY)
     return minEntropyT
 }

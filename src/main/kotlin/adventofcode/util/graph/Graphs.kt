@@ -63,16 +63,15 @@ object Graphs {
 
     fun <V> reachable(start: V, maxSteps: Int = Int.MAX_VALUE, neighbors: (V) -> List<V>): Set<V> {
         val visited = mutableSetOf<V>()
-        val queue = mutableListOf(Reachable(0, start))
-        while (queue.isNotEmpty()) {
-            val reachable = queue.removeFirst()
-            visited += reachable.vertex
-            if (reachable.steps < maxSteps) {
-                    neighbors(reachable.vertex)
-                        .filter { it !in visited }
-                        .map { Reachable(reachable.steps + 1, it) }
-                        .forEach { queue.addLast(it) }
-
+        val stack = mutableListOf(Pair(start, 0))
+        while (stack.isNotEmpty()) {
+            val (current, steps) = stack.removeFirst()
+            if (steps > maxSteps) continue
+            if (current !in visited) {
+                visited.add(current)
+                neighbors(current)
+                    .filter { it !in visited }
+                    .forEach { stack.add(Pair(it, steps + 1)) }
             }
         }
         return visited

@@ -34,15 +34,15 @@ class Day20Test {
 
     @Test
     fun example2() {
-        calculatePart2(readExample2()) shouldBe 0
+        calculatePart2(readExample2(), 50) shouldBe 285
     }
 
     @Test
     fun part2() {
-        calculatePart2(readInput()) shouldBe 0
+        calculatePart2(readInput(), 100) shouldBe 961364
     }
 
-    private fun calculatePart1(input: String, savingsThreshold:Int): Int = input.countBestCheats(savingsThreshold)
+    private fun calculatePart1(input: String, savingsThreshold:Int): Int = input.countBestCheats(2, savingsThreshold)
 
-    private fun calculatePart2(input: String): Int = 0
+    private fun calculatePart2(input: String, savingsThreshold: Int): Int = input.countBestCheats(20, savingsThreshold)
 }

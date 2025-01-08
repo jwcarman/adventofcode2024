@@ -17,141 +17,39 @@
 package adventofcode.util.graph
 
 import java.util.PriorityQueue
-import kotlin.time.measureTime
-import kotlin.time.measureTimedValue
-
-private fun compareDoubles(left: Double, right: Double): Int {
-    if (left < right) {
-        return -1
-    }
-    if (right < left) {
-        return 1
-    }
-    return 0
-}
 
 object Graphs {
 
-    /**
-     * Implementation of Yen's K-Shortest Paths Algorithm as a sequence
-     * @param start the starting vertex
-     * @param end the ending vertex
-     * @param vertices the set of all vertices
-     * @param neighbors a function that returns the neighbors of a vertex
-     * @param weight a function that returns the weight of an edge
-     * @return a sequence of increasingly longer paths from the start vertex to the end vertex
-     */
-    fun <V> shortestPaths(start: V, end: V, vertices: Set<V>, neighbors: (V) -> List<V>, weight: (V, V) -> Double) =
-        sequence {
-            val previousPaths = mutableListOf<List<V>>()
-            val absoluteShortest = shortestPaths(start, vertices, neighbors, weight)
-            if (absoluteShortest.pathExists(end)) {
-                val shortest = absoluteShortest.pathTo(end)
-                yield(shortest)
-                previousPaths.addLast(shortest)
-                var k = 2
-                while (true) {
-                    val previousPath = previousPaths.last()
-                    val candidates = previousPath.asSequence().zipWithNext().map { (from, to) ->
-                        val head = previousPath.takeWhile { it != to }
-                        val visited = head.toSet()
-                        val limitedNeighbors: (V) -> List<V> =
-                            { n -> if (n == from) neighbors(n) - visited - to else neighbors(n) - visited }
-                        val (tails, _) = measureTimedValue { shortestPaths(from, vertices, limitedNeighbors, weight) }
-                        head to tails
-                    }
-                        .filter { (_, tails) -> tails.pathExists(end) }
-                        .map { (head, tails) -> head + tails.pathTo(end).drop(1) }
-                        .filter { it !in previousPaths }
-                        .toList()
-
-                    if (candidates.isEmpty()) {
-                        return@sequence
-                    }
-                    val nextShortest =
-                        candidates.minBy { it.asSequence().zipWithNext().sumOf { (from, to) -> weight(from, to) } }
-                    yield(nextShortest)
-                    previousPaths.addLast(nextShortest)
-                    k++
-                }
-            }
-        }
+    private fun <V> MutableMap<V, Double>.distanceTo(vertex: V) = getOrPut(vertex) { Double.POSITIVE_INFINITY }
 
     /**
      * Implementation of Dijkstra's Algorithm
+     *
      * @param start the starting vertex
-     * @param vertices the set of all vertices
      * @param neighbors a function that returns the neighbors of a vertex
-     * @param weight a function that returns the weight of an edge
-     * @return the shortest paths from the start vertex to all other vertices
+     * @param distance a function that returns the distance between two vertices
+     * @return a {@link ShortestPaths} object containing the shortest paths from the start vertex to all other vertices
      */
     fun <V> shortestPaths(
         start: V,
         neighbors: (V) -> List<V>,
-        weight: (V, V) -> Double = { _, _ -> 1.0 }
+        distance: (V, V) -> Double = { _, _ -> 1.0 }
     ): ShortestPaths<V> {
         val pred = mutableMapOf<V, V>()
         val dist = mutableMapOf<V, Double>()
         val visited = mutableSetOf<V>()
         dist[start] = 0.0
         val queue = PriorityQueue { l: V, r: V ->
-            compareDoubles(
-                dist.getOrDefault(l, Double.MAX_VALUE),
-                dist.getOrDefault(r, Double.MAX_VALUE)
-            )
+            dist.distanceTo(l).compareTo(dist.distanceTo(r))
         }
         queue.add(start)
         while (queue.isNotEmpty()) {
             val vertex = queue.poll()
             visited.add(vertex)
-            val distanceToVertex = dist.getOrDefault(vertex, Double.MAX_VALUE)
+            val distanceToVertex = dist.distanceTo(vertex)
             neighbors(vertex).filter { it !in visited }.forEach { neighbor ->
-                val distanceThroughVertex = distanceToVertex + weight(vertex, neighbor)
-                if (distanceThroughVertex < dist.getOrDefault(neighbor, Double.MAX_VALUE)) {
-                    pred[neighbor] = vertex
-                    dist[neighbor] = distanceThroughVertex
-                    queue.add(neighbor)
-                }
-            }
-        }
-        return ShortestPaths(start, dist, pred)
-    }
-
-    /**
-     * Implementation of Dijkstra's Algorithm
-     * @param start the starting vertex
-     * @param vertices the set of all vertices
-     * @param neighbors a function that returns the neighbors of a vertex
-     * @param weight a function that returns the weight of an edge
-     * @return the shortest paths from the start vertex to all other vertices
-     */
-    fun <V> shortestPaths(
-        start: V,
-        vertices: Set<V>,
-        neighbors: (V) -> List<V>,
-        weight: (V, V) -> Double = { _, _ -> 1.0 }
-    ): ShortestPaths<V> {
-        val pred = mutableMapOf<V, V>()
-        val dist = mutableMapOf<V, Double>()
-        val visited = mutableSetOf<V>()
-        vertices.forEach { vertex -> dist[vertex] = Double.POSITIVE_INFINITY }
-        dist[start] = 0.0
-        val queue = PriorityQueue { l: V, r: V ->
-            compareDoubles(
-                dist.getOrDefault(l, Double.MAX_VALUE),
-                dist.getOrDefault(r, Double.MAX_VALUE)
-            )
-        }
-        queue.add(start)
-        while (queue.isNotEmpty()) {
-            val vertex = queue.poll()
-            require(vertex in vertices)
-            visited.add(vertex)
-            val distanceToVertex = dist.getOrDefault(vertex, Double.MAX_VALUE)
-            neighbors(vertex).filter { it !in visited }.forEach { neighbor ->
-                require(neighbor in vertices)
-                val distanceThroughVertex = distanceToVertex + weight(vertex, neighbor)
-                if (distanceThroughVertex < dist[neighbor]!!) {
+                val distanceThroughVertex = distanceToVertex + distance(vertex, neighbor)
+                if (distanceThroughVertex < dist.distanceTo(neighbor)) {
                     pred[neighbor] = vertex
                     dist[neighbor] = distanceThroughVertex
                     queue.add(neighbor)
@@ -167,13 +65,14 @@ object Graphs {
         val visited = mutableSetOf<V>()
         val queue = mutableListOf(Reachable(0, start))
         while (queue.isNotEmpty()) {
-            val reachable = queue.removeLast()
+            val reachable = queue.removeFirst()
             visited += reachable.vertex
             if (reachable.steps < maxSteps) {
-                val ns = neighbors(reachable.vertex)
-                    .filter { it !in visited }
-                    .map { Reachable(reachable.steps + 1, it) }
-                queue.addAll(ns)
+                    neighbors(reachable.vertex)
+                        .filter { it !in visited }
+                        .map { Reachable(reachable.steps + 1, it) }
+                        .forEach { queue.addLast(it) }
+
             }
         }
         return visited

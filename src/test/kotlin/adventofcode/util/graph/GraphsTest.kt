@@ -18,6 +18,7 @@ package adventofcode.util.graph
 
 import adventofcode.util.geom.plane.Point2D
 import adventofcode.util.graph.Graphs.parseGraph
+import adventofcode.util.grid.TextGrid
 import io.kotest.matchers.shouldBe
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -43,17 +44,6 @@ class GraphsTest {
             Point2D(0, -1)
         )
         assertThat(Graphs.reachable(Point2D.origin()) { it.neighbors().filter { n -> n in searchSpace } }).hasSize(5)
-    }
-
-    @Test
-    fun `shortest paths sequence should be empty when there are no paths`() {
-        val start = Point2D.origin()
-        val end = Point2D(1, 1)
-        val vertices = setOf(start, end)
-
-        val neighborsFn: (Point2D) -> List<Point2D> = { _ -> emptyList() }
-        val weightFn: (Point2D, Point2D) -> Double = { _, _ -> 1.0 }
-        Graphs.shortestPaths(start, end, vertices, neighborsFn, weightFn).toList() shouldBe emptyList()
     }
 
     @Test
@@ -99,18 +89,12 @@ class GraphsTest {
     }
 
     @Test
-    fun `shortest path sequence should terminate after finding all paths`() {
-        val graph = """
-            A -- e1[1.0] --> B
-            B -- e2[1.0] --> C
-            A -- e3[5.0] --> D
-            D -- e4[5.0] --> C
-            """.trimIndent().parseGraph()
-        val shortestPaths = graph.shortestPaths("A", "C").toList()
-        shortestPaths shouldBe listOf(
-            listOf("A", "B", "C"),
-            listOf("A", "D", "C")
-        )
+    fun `reachable should return all reachable neighbors`() {
+        val point = Point2D.origin()
+        Graphs.reachable(point, 0, Point2D::neighbors).size shouldBe 1
+        Graphs.reachable(point, 1, Point2D::neighbors).size shouldBe 5
+        Graphs.reachable(point, 2, Point2D::neighbors).size shouldBe 13
+        Graphs.reachable(point, 3, Point2D::neighbors).size shouldBe 25
+        Graphs.reachable(point, 4, Point2D::neighbors).size shouldBe 41
     }
-
 }

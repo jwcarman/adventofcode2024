@@ -39,4 +39,4 @@ Here are the solutions I have implemented along with the time it took to run eac
 | [Day 17: Chronospatial Computer](src/test/kotlin/adventofcode/Day17Test.kt) | 93 |
 | [Day 18: RAM Run](src/test/kotlin/adventofcode/Day18Test.kt) | 476 |
 | [Day 19: Linen Layout](src/test/kotlin/adventofcode/Day19Test.kt) | 60 |
-| [Day 20: Race Condition](src/test/kotlin/adventofcode/Day20Test.kt) | 0 |
+| [Day 20: Race Condition](src/test/kotlin/adventofcode/Day20Test.kt) | 474 |

@@ -24,7 +24,7 @@ class ShortestPaths<V>(
 
     fun pathExists(end: V): Boolean = end in predecessors
 
-    fun reachable(): Set<V> = predecessors.keys.filter { pathExists(it) }.toSet()
+    fun reachable(): Set<V> = predecessors.keys.toSet() + origin
 
     fun pathTo(end: V): List<V> {
         val path = mutableListOf(end)
@@ -34,5 +34,5 @@ class ShortestPaths<V>(
         return path
     }
 
-    fun distanceTo(end: V) = distances.getOrDefault(end, Double.POSITIVE_INFINITY)
+    fun distanceTo(end: V) = if(origin == end) 0.0 else distances.getOrDefault(end, Double.POSITIVE_INFINITY)
 }

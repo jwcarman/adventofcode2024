@@ -54,11 +54,9 @@ fun String.findShortestPathToExitAfter(nBytes: Int): Int {
     val points = parsePoints()
     val map = points.generateMap()
     points.take(nBytes).forEach { map[it] = '#' }
-    val vertices = map.coordinates().filter { map[it] != '#' }.toSet()
     val neighbors = { p: Point2D -> p.neighbors().filter { it in map }.filter { map[it] != '#' } }
     return Graphs.shortestPaths(
         map.coordinates().first(),
-        vertices,
         neighbors
     ) { _, _ -> 1.0 }.pathTo(map.coordinates().last()).size - 1
 }

@@ -40,14 +40,6 @@ interface Grid<T : Any> {
         }
     }
 
-    fun neighborsOf(coordinate: Point2D) = sequence {
-        coordinate.neighbors().forEach { neighbor ->
-            if (neighbor in this@Grid) {
-                yield(neighbor)
-            }
-        }
-    }
-
     operator fun get(x: Int, y: Int): T
 
     operator fun set(x: Int, y: Int, value: T)
@@ -92,5 +84,17 @@ interface Grid<T : Any> {
 
     fun pathsFrom(coordinate: Point2D) = Direction.entries.map { Path(this, it, coordinate) }
 
-    fun isEdge(coordinate: Point2D) = coordinate.x == 0 || coordinate.y == 0 || coordinate.x == width() - 1 || coordinate.y == height() - 1
+    fun isEdge(coordinate: Point2D) =
+        coordinate.x == 0 || coordinate.y == 0 || coordinate.x == width() - 1 || coordinate.y == height() - 1
+
+    fun neighborsOf(
+        coordinate: Point2D,
+        directions: List<Direction> = listOf(
+            Direction.NORTH,
+            Direction.EAST,
+            Direction.SOUTH,
+            Direction.WEST
+        )
+    ) = directions.map { coordinate + it }.filter { it in this }
+
 }

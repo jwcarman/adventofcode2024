@@ -29,9 +29,7 @@ interface Graph<V : Any, E : Any> {
     fun neighbors(from: V): List<V>
 
     fun shortestPaths(start: V): ShortestPaths<V> =
-        Graphs.shortestPaths(start, vertices(), ::neighbors) { from, to -> edge(from, to)?.weight ?: Double.MAX_VALUE }
-
-    fun shortestPaths(start: V, end: V): Sequence<List<V>> = Graphs.shortestPaths(start, end, vertices(), ::neighbors) { from, to -> edge(from, to)?.weight ?: Double.MAX_VALUE }
+        Graphs.shortestPaths(start, ::neighbors) { from, to -> edge(from, to)?.weight ?: Double.MAX_VALUE }
 
     fun dfs(start: V, end: V): List<V> = Graphs.dfs(start, end, ::neighbors)
     fun bfs(start: V, end: V): List<V> = Graphs.bfs(start, end, ::neighbors)

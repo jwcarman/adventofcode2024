@@ -64,8 +64,7 @@ class ReindeerMaze(input: String) {
 
     private fun shortestPaths(): ShortestPaths<Pose> {
         val start = Pose(maze.coordinates().find { maze[it] == START }!!, Direction.EAST)
-        val vertices = Graphs.reachable(start, neighbors = ::successorsOf)
-        return Graphs.shortestPaths(start, vertices, ::successorsOf) { p1, p2 -> p1.distanceTo(p2) }
+        return Graphs.shortestPaths(start, ::successorsOf) { p1, p2 -> p1.distanceTo(p2) }
     }
 
     fun findLowestScore(): Int {

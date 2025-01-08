@@ -20,26 +20,25 @@ import adventofcode.util.geom.plane.Point2D
 import adventofcode.util.graph.Graphs
 import adventofcode.util.grid.TextGrid
 
-fun String.countBestCheats(savingsThreshold: Int): Int {
+fun String.countBestCheats(maxCheatLength: Int, savingsThreshold: Int): Int {
     val map = TextGrid(lines())
     val start = map.coordinates().find { map[it] == 'S' }!!
     val end = map.coordinates().find { map[it] == 'E' }!!
-    val vertices = map.coordinates().filter { map[it] != '#' }.toSet()
     val neighbors: (Point2D) -> List<Point2D> =
-        { p: Point2D -> p.neighbors().filter { it in map }.filter { map[it] != '#' } }
-    val shortestPaths = Graphs.shortestPaths(
-        start,
-        vertices,
-        neighbors
-    )
-    val shortestDistance = shortestPaths.distanceTo(end)
-    val shortestPath = shortestPaths.pathTo(end)
+        { p: Point2D -> map.neighborsOf(p).filter { map[it] != '#' } }
 
-    val cheats = shortestPath.flatMap { p -> p.neighbors().filter { map[it] == '#' && !map.isEdge(it) } }.toSet()
-    return cheats.count { cheat ->
-        map[cheat] = '.'
-        val newShortestPaths = Graphs.shortestPaths(start, vertices + cheat, neighbors)
-        map[cheat] = '#'
-        newShortestPaths.distanceTo(end) <= shortestDistance - savingsThreshold
-    }
+    val shortestPath = Graphs.shortestPaths(start, neighbors).pathTo(end)
+
+    val remainingStepsFrom = shortestPath.mapIndexed { index, point -> point to shortestPath.size - 1 - index }.toMap()
+        .withDefault { Int.MAX_VALUE }
+
+    return shortestPath.flatMapIndexed { index, origin ->
+        shortestPath.subList(index + 1, shortestPath.size)
+            .filter { cheat -> origin.manhattanDistance(cheat) <= maxCheatLength }
+            .map { cheat ->
+                remainingStepsFrom.getValue(origin) - origin.manhattanDistance(cheat) - remainingStepsFrom.getValue(
+                    cheat
+                )
+            }
+    }.count { it >= savingsThreshold }
 }

@@ -59,19 +59,17 @@ object Graphs {
         return ShortestPaths(start, dist, pred)
     }
 
-    private data class Reachable<V>(val steps: Int, val vertex: V)
-
     fun <V> reachable(start: V, maxSteps: Int = Int.MAX_VALUE, neighbors: (V) -> List<V>): Set<V> {
         val visited = mutableSetOf<V>()
-        val stack = mutableListOf(Pair(start, 0))
-        while (stack.isNotEmpty()) {
-            val (current, steps) = stack.removeFirst()
-            if (steps > maxSteps) continue
-            if (current !in visited) {
-                visited.add(current)
-                neighbors(current)
-                    .filter { it !in visited }
-                    .forEach { stack.add(Pair(it, steps + 1)) }
+        val queue = mutableListOf(Pair(start, 0))
+        while (queue.isNotEmpty()) {
+            val (current, steps) = queue.removeFirst()
+            if (visited.add(current) && steps < maxSteps) {
+                queue.addAll(
+                    neighbors(current)
+                        .filter { n -> n !in visited }
+                        .map { n -> Pair(n, steps + 1) }
+                )
             }
         }
         return visited
